@@ -4,15 +4,7 @@ import mars.mips.hardware.Register;
 
 public class Scheduler {
     
-    private static ProcessTable table;
-    
-    /**
-      * Class constructor.
-      *  @param table Saved process table
-      */
-    public Scheduler(ProcessTable table) {
-        this.table = table;
-    }
+    private static final ProcessTable table = new ProcessTable();
     
     /**
      * Method for scheduling a ready process.

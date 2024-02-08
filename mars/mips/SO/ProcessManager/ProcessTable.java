@@ -1,20 +1,21 @@
 package mars.mips.SO.ProcessManager;
 
 import java.util.ArrayList; // TODO ArrayList é o melhor para armazenar?
+//import java.util.Deque;
 
 
 public class ProcessTable { // TODO checar se há a necessidade dos métodos: changeState, adicionarProcesso e removerProcesso
     
     // Possible processes
-    private static ArrayList<ProcessControlBlock> readyProcesses; // TODO ArrayList é o melhor para armazenar?
-    private static ProcessControlBlock executionProcess;
+    private ArrayList<ProcessControlBlock> readyProcesses; // TODO ArrayList é o melhor para armazenar?
+    private ProcessControlBlock executionProcess;
     
     public ArrayList<ProcessControlBlock> getReadyProcesses() {
         return readyProcesses;
     }
     
     public void setReadyProcesses(ArrayList<ProcessControlBlock> readyProcesses) {
-        ProcessTable.readyProcesses = readyProcesses;
+        this.readyProcesses = readyProcesses;
     }
     
     public ProcessControlBlock getExecutionProcess() {
@@ -22,7 +23,7 @@ public class ProcessTable { // TODO checar se há a necessidade dos métodos: ch
     }
     
     public void setExecutionProcess(ProcessControlBlock executionProcess) {
-        ProcessTable.executionProcess = executionProcess;
+        this.executionProcess = executionProcess;
     }
     
     /**
@@ -39,7 +40,7 @@ public class ProcessTable { // TODO checar se há a necessidade dos métodos: ch
       *  @param programAddress Address of the start of the program
       *  @param state The current state of the process
       */
-    public static void createProcess(int pid, String programAddress, ProcessControlBlock.ProcessState state) {
+    public void createProcess(int pid, String programAddress, ProcessControlBlock.ProcessState state) {
         ProcessControlBlock newProcess = new ProcessControlBlock(pid, programAddress, state);
         
         if (state == ProcessControlBlock.ProcessState.READY) {
@@ -53,7 +54,7 @@ public class ProcessTable { // TODO checar se há a necessidade dos métodos: ch
       * Method for removing a process through its PID.
       *  @param pid Integer value that serves as process identifier
       */
-    public static void removeProcess(int pid) throws Exception {
+    public void removeProcess(int pid) throws Exception {
         boolean found = false;
         
         for (int i = 0; i < readyProcesses.size(); i++) {
@@ -83,7 +84,7 @@ public class ProcessTable { // TODO checar se há a necessidade dos métodos: ch
       *  @param pid Integer value that serves as process identifier
       *  @param newState New process state
       */
-    public static void changeState(int pid, ProcessControlBlock.ProcessState newState) throws Exception {
+    public void changeState(int pid, ProcessControlBlock.ProcessState newState) throws Exception {
         boolean found = false;
         
         for (int i = 0; i < readyProcesses.size(); i++) {
@@ -119,7 +120,7 @@ public class ProcessTable { // TODO checar se há a necessidade dos métodos: ch
     /**
       * Method for displaying all processes for debugging.
       */
-    public static void listProcesses() {
+    public void listProcesses() {
         System.out.println("PID\tAddress\tState");
         
         for (ProcessControlBlock processo : readyProcesses) {
