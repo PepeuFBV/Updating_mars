@@ -5,25 +5,34 @@ import mars.mips.hardware.Register;
 import mars.mips.hardware.RegisterFile;
 
 public class ProcessControlBlock {
-	private int priority; // prioridade dos processos
+  
+  // Process priority
+	private int priority;
 
 	// Special registers storage
 	public static final int GLOBAL_POINTER_REGISTER = 28;
 	public static final int STACK_POINTER_REGISTER = 29;
 
 	// Registers array
-	private static final Register[] regFile = { new Register("$zero", 0, 0), new Register("$at", 1, 0),
-			new Register("$v0", 2, 0), new Register("$v1", 3, 0), new Register("$a0", 4, 0), new Register("$a1", 5, 0),
-			new Register("$a2", 6, 0), new Register("$a3", 7, 0), new Register("$t0", 8, 0), new Register("$t1", 9, 0),
-			new Register("$t2", 10, 0), new Register("$t3", 11, 0), new Register("$t4", 12, 0),
-			new Register("$t5", 13, 0), new Register("$t6", 14, 0), new Register("$t7", 15, 0),
-			new Register("$s0", 16, 0), new Register("$s1", 17, 0), new Register("$s2", 18, 0),
-			new Register("$s3", 19, 0), new Register("$s4", 20, 0), new Register("$s5", 21, 0),
-			new Register("$s6", 22, 0), new Register("$s7", 23, 0), new Register("$t8", 24, 0),
-			new Register("$t9", 25, 0), new Register("$k0", 26, 0), new Register("$k1", 27, 0),
-			new Register("$gp", GLOBAL_POINTER_REGISTER, Memory.globalPointer),
-			new Register("$sp", STACK_POINTER_REGISTER, Memory.stackPointer), new Register("$fp", 30, 0),
-			new Register("$ra", 31, 0) };
+	private final Register[] regFile = {
+        new Register("$zero", 0, 0), new Register("$at", 1, 0),
+        new Register("$v0", 2, 0), new Register("$v1", 3, 0),
+        new Register("$a0", 4, 0), new Register("$a1", 5, 0),
+        new Register("$a2", 6, 0), new Register("$a3", 7, 0),
+        new Register("$t0", 8, 0), new Register("$t1", 9, 0),
+        new Register("$t2", 10, 0), new Register("$t3", 11, 0),
+        new Register("$t4", 12, 0), new Register("$t5", 13, 0),
+        new Register("$t6", 14, 0), new Register("$t7", 15, 0),
+        new Register("$s0", 16, 0), new Register("$s1", 17, 0),
+        new Register("$s2", 18, 0), new Register("$s3", 19, 0),
+        new Register("$s4", 20, 0), new Register("$s5", 21, 0),
+        new Register("$s6", 22, 0), new Register("$s7", 23, 0),
+        new Register("$t8", 24, 0), new Register("$t9", 25, 0),
+        new Register("$k0", 26, 0), new Register("$k1", 27, 0),
+        new Register("$gp", GLOBAL_POINTER_REGISTER, Memory.globalPointer),
+        new Register("$sp", STACK_POINTER_REGISTER, Memory.stackPointer),
+        new Register("$fp", 30, 0), new Register("$ra", 31, 0)
+    };
 
 	/**
 	 * Class initializer.
@@ -38,9 +47,9 @@ public class ProcessControlBlock {
 			this.pid = pid;
 			setProgramAddress(programAddress);
 			setState(state);
-			this.priority = priority; // Atribuição da prioridade durante a criação do PCB
+			this.priority = priority;
 		} catch (RuntimeException e) {
-			System.err.println("Erro: Falha na criação do ProcessControlBlock.");
+			System.err.println("Error: ProcessControlBlock creation failed.");
 		}
 	}
 
@@ -49,9 +58,9 @@ public class ProcessControlBlock {
 			this.pid = pid;
 			setProgramAddress(programAddress);
 			setState(state);
-			this.priority = 0; // Definir a prioridade como 0 por padrão
+			this.priority = 0;
 		} catch (RuntimeException e) {
-			System.err.println("Erro: Falha na criação do ProcessControlBlock.");
+			System.err.println("Error: ProcessControlBlock creation failed.");
 		}
 	}
 
@@ -86,33 +95,33 @@ public class ProcessControlBlock {
 	private static Register lo = new Register("lo", 34, 0);// this is an internal register with arbitrary number
 
 	public Register getProgramCounter() {
-		return programCounter;
-	}
-
-	public void setProgramCounter(Register programCounter) {
-		ProcessControlBlock.programCounter = programCounter;
-	}
-
-	public static Register getHi() {
-		return hi;
-	}
-
-	public static void setHi(Register hi) {
-		ProcessControlBlock.hi = hi;
-	}
-
-	public static Register getLo() {
-		return lo;
-	}
-
-	public static void setLo(Register lo) {
-		ProcessControlBlock.lo = lo;
-	}
-
-	// Logical atributes
-	private int pid;
-	private int programAddress;
-	private ProcessState state;
+        return programCounter;
+    }
+    
+    public void setProgramCounter(Register programCounter) {
+        this.programCounter = programCounter;
+    }
+    
+    public Register getHi() {
+        return hi;
+    }
+    
+    public void setHi(Register hi) {
+        this.hi = hi;
+    }
+    
+    public Register getLo() {
+        return lo;
+    }
+    
+    public void setLo(Register lo) {
+        this.lo = lo;
+    }
+    
+    // Logical atributes
+    private int pid;
+    private int programAddress;
+    private ProcessState state;
 
 	// Possible states for a process
 	public enum ProcessState {
@@ -126,7 +135,7 @@ public class ProcessControlBlock {
 	public int getProgramAddress() {
 		return this.programAddress;
 	}
-
+  
 	public final void setProgramAddress(int programAddress) throws RuntimeException {
 		if (programAddress != 0) {
 			this.programAddress = programAddress;
