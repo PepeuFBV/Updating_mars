@@ -37,7 +37,6 @@ public class ProcessControlBlock {
      * @param pid Integer value that serves as process identifier
      * @param programAddress Address of the start of the program
      * @param state The current state of the process
-      *
      */
     public ProcessControlBlock(int pid, int programAddress, ProcessState state) {
         try {
@@ -101,7 +100,7 @@ public class ProcessControlBlock {
     private ProcessState state;
     
     // Possible states for a process
-    public enum ProcessState {
+    public static enum ProcessState {
         READY, RUNNING, BLOCKED
     }
     

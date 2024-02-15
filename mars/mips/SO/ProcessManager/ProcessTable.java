@@ -12,6 +12,11 @@ public abstract class ProcessTable {
     // Possible processes
     private static Deque<ProcessControlBlock> readyProcesses = new LinkedList<>();
     private static ProcessControlBlock executionProcess = new ProcessControlBlock(0, RegisterFile.getInitialProgramCounter(), ProcessControlBlock.ProcessState.RUNNING);
+   
+    // PID is unique and incremets for each new process
+    public static int getPID() {
+        return PID++;
+    }
     
     public static Deque<ProcessControlBlock> getReadyProcesses() {
         return readyProcesses;
@@ -29,35 +34,28 @@ public abstract class ProcessTable {
         ProcessTable.executionProcess = executionProcess;
     }
     
-    public static int getPID() {
-        return PID++;
-    }
-    
     /**
-     * Method for changing a process's state in the table.
-     *
+     * Changes the execution process state.
      * @param newState New process state
-     * @throws java.lang.Exception
      */
-    public static void changeState(ProcessControlBlock.ProcessState newState) throws Exception {
+    public static void changeState(ProcessControlBlock.ProcessState newState) {
+
         executionProcess.setState(newState);
     }
     
     /**
-     * Method for displaying all processes for debugging.
+     * Display all process data for debugging, including the execution process.
      */
     public static void listProcesses() {
         System.out.println("PID\tAddress\tState");
 
+        // Show ready processes
         for (ProcessControlBlock processo : readyProcesses) {
-            // Imprime na tela os dados do processo
             System.out.println(processo.getPid() + "\t" + processo.getProgramAddress() + "\t" + processo.getState());
         }
-        // Verifica se o processo em execução não é nulo
-        if (executionProcess != null) {
-            // Imprime na tela os dados do processo
-            System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState());
-        }
+        
+        // Show execution process
+        System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState());
     }
     
 }
