@@ -1,137 +1,61 @@
 package mars.mips.SO.ProcessManager;
 
-import java.util.ArrayList; // TODO ArrayList é o melhor para armazenar?
-//import java.util.Deque;
+import java.util.Deque;
+import java.util.LinkedList;
+import mars.mips.hardware.RegisterFile;
 
-
-public class ProcessTable { // TODO checar se há a necessidade dos métodos: changeState, adicionarProcesso e removerProcesso
+public abstract class ProcessTable {
+    
+    // Initial generated PID value for new processes
+    private static int PID = 1;
     
     // Possible processes
-    private ArrayList<ProcessControlBlock> readyProcesses; // TODO ArrayList é o melhor para armazenar?
-    private ProcessControlBlock executionProcess;
+    private static Deque<ProcessControlBlock> readyProcesses = new LinkedList<>();
+    private static ProcessControlBlock executionProcess = new ProcessControlBlock(0, RegisterFile.getInitialProgramCounter(), ProcessControlBlock.ProcessState.RUNNING);
     
-    public ArrayList<ProcessControlBlock> getReadyProcesses() {
+    // PID is unique and incremets for each new process
+    public static int getPID() {
+        return PID++;
+    }
+    
+    public static Deque<ProcessControlBlock> getReadyProcesses() {
         return readyProcesses;
     }
     
-    public void setReadyProcesses(ArrayList<ProcessControlBlock> readyProcesses) {
-        this.readyProcesses = readyProcesses;
+    public static void setReadyProcesses(Deque<ProcessControlBlock> readyProcesses) {
+        ProcessTable.readyProcesses = readyProcesses;
     }
     
-    public ProcessControlBlock getExecutionProcess() {
+    public static ProcessControlBlock getExecutionProcess() {
         return executionProcess;
     }
     
-    public void setExecutionProcess(ProcessControlBlock executionProcess) {
-        this.executionProcess = executionProcess;
+    public static void setExecutionProcess(ProcessControlBlock executionProcess) {
+        ProcessTable.executionProcess = executionProcess;
     }
     
     /**
-      * Class initializer.
-      **/
-    public ProcessTable() {
-        readyProcesses = new ArrayList<ProcessControlBlock>();
-        executionProcess = null;
+     * Changes the execution process state.
+     * 
+     * @param newState New process state
+     */
+    public static void changeState(ProcessControlBlock.ProcessState newState) {
+        executionProcess.setState(newState);
     }
     
     /**
-      * Method for creating a new process and assessing where it should be depending on its state.
-      *  @param pid Integer value that serves as process identifier
-      *  @param programAddress Address of the start of the program
-      *  @param state The current state of the process
-      */
-    public void createProcess(int pid, String programAddress, ProcessControlBlock.ProcessState state) {
-        ProcessControlBlock newProcess = new ProcessControlBlock(pid, programAddress, state);
-        
-        if (state == ProcessControlBlock.ProcessState.READY) {
-            readyProcesses.add(newProcess);
-        } else if (state == ProcessControlBlock.ProcessState.RUNNING) { // TODO checar se já há processo em execução
-            executionProcess = newProcess;
-        }
-    }
-    
-    /**
-      * Method for removing a process through its PID.
-      *  @param pid Integer value that serves as process identifier
-      */
-    public void removeProcess(int pid) throws Exception {
-        boolean found = false;
-        
-        for (int i = 0; i < readyProcesses.size(); i++) {
-            ProcessControlBlock process = readyProcesses.get(i);
-            
-            if (process.getPid() == pid) {
-                readyProcesses.remove(i);
-                found = true;
-                break;
-            }
-        }
-        
-        if (executionProcess != null) {
-            if (executionProcess.getPid() == pid) {
-                executionProcess = null;
-                found = true;
-            }
-        }
-        
-        if (!found) {
-            throw new Exception("Process with PID " + pid + " doesn't exist in the process table.");
-        }
-    }
-    
-    /**
-      * Method for changing a processe's state in the table.
-      *  @param pid Integer value that serves as process identifier
-      *  @param newState New process state
-      */
-    public void changeState(int pid, ProcessControlBlock.ProcessState newState) throws Exception {
-        boolean found = false;
-        
-        for (int i = 0; i < readyProcesses.size(); i++) {
-            ProcessControlBlock process = readyProcesses.get(i);
-            
-            if (process.getPid() == pid) {
-                process.setState(newState);
-                if (newState == ProcessControlBlock.ProcessState.RUNNING) {
-                    readyProcesses.remove(i);
-                    executionProcess = process;
-                }
-                found = true;
-                break;
-            }
-        }
-        
-        if (executionProcess != null) {
-            if (executionProcess.getPid() == pid) {
-                executionProcess.setState(newState);
-                if (newState == ProcessControlBlock.ProcessState.READY) {
-                    readyProcesses.add(executionProcess);
-                    executionProcess = null;
-                }
-                found = true;
-            }
-        }
-        
-        if (!found) {
-            throw new Exception("Process with PID " + pid + " doesn't exist in the process table.");
-        }
-    }
-    
-    /**
-      * Method for displaying all processes for debugging.
-      */
-    public void listProcesses() {
+     * Display all process data for debugging, including the execution process.
+     */
+    public static void listProcesses() {
         System.out.println("PID\tAddress\tState");
-        
+
+        // Show ready processes
         for (ProcessControlBlock processo : readyProcesses) {
-            // Imprime na tela os dados do processo
             System.out.println(processo.getPid() + "\t" + processo.getProgramAddress() + "\t" + processo.getState());
         }
-        // Verifica se o processo em execução não é nulo
-        if (executionProcess != null) {
-            // Imprime na tela os dados do processo
-            System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState());
-        }
+        
+        // Show execution process
+        System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState());
     }
     
 }
