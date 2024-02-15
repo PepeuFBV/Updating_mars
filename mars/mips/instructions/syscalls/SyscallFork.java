@@ -34,6 +34,9 @@ public class SyscallFork extends AbstractSyscall {
         // Save the actual context, same as execution process
         fork.copyFromHardware();
         
+        // Updates the program counter to current program address
+        fork.getProgramCounter().setValue(processAddress);
+        
         // Add the new process in the process table
         ProcessTable.getReadyProcesses().addLast(fork);
         

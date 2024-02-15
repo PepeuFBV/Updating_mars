@@ -11,7 +11,7 @@ public class ProcessControlBlock {
     public static final int STACK_POINTER_REGISTER = 29;
     
     // Registers array
-    private static final Register[] regFile = {
+    private final Register[] regFile = {
         new Register("$zero", 0, 0), new Register("$at", 1, 0),
         new Register("$v0", 2, 0), new Register("$v1", 3, 0),
         new Register("$a0", 4, 0), new Register("$a1", 5, 0),
@@ -53,7 +53,7 @@ public class ProcessControlBlock {
      * Method for displaying the register values for debugging.
       *
      */
-    public static void showRegisters() {
+    public void showRegisters() {
         for (Register rf : regFile) {
             System.out.println("Name: " + rf.getName());
             System.out.println("Number: " + rf.getNumber());
@@ -62,37 +62,37 @@ public class ProcessControlBlock {
         }
     }
     
-    public static Register[] getRegisters() {
+    public Register[] getRegisters() {
         return regFile;
     }
     
     // More special registers
-    private static Register programCounter = new Register("pc", 32, Memory.textBaseAddress);
-    private static Register hi = new Register("hi", 33, 0);//this is an internal register with arbitrary number
-    private static Register lo = new Register("lo", 34, 0);// this is an internal register with arbitrary number
+    private Register programCounter = new Register("pc", 32, Memory.textBaseAddress);
+    private Register hi = new Register("hi", 33, 0);//this is an internal register with arbitrary number
+    private Register lo = new Register("lo", 34, 0);// this is an internal register with arbitrary number
     
     public Register getProgramCounter() {
         return programCounter;
     }
     
     public void setProgramCounter(Register programCounter) {
-        ProcessControlBlock.programCounter = programCounter;
+        this.programCounter = programCounter;
     }
     
-    public static Register getHi() {
+    public Register getHi() {
         return hi;
     }
     
-    public static void setHi(Register hi) {
-        ProcessControlBlock.hi = hi;
+    public void setHi(Register hi) {
+        this.hi = hi;
     }
     
-    public static Register getLo() {
+    public Register getLo() {
         return lo;
     }
     
-    public static void setLo(Register lo) {
-        ProcessControlBlock.lo = lo;
+    public void setLo(Register lo) {
+        this.lo = lo;
     }
     
     // Logical atributes
