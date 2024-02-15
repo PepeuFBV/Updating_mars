@@ -44,7 +44,7 @@ public class ProcessControlBlock {
             setProgramAddress(programAddress);
             setState(state);
         } catch (RuntimeException e) {
-            System.err.println("Error on creating PCB: " + e);
+            System.err.println("Error: ProcessControlBlock creation failed.");
         }
     }
     
@@ -116,7 +116,7 @@ public class ProcessControlBlock {
         if (programAddress != 0) {
             this.programAddress = programAddress;
         } else {
-            throw new RuntimeException("Error: invalid program address: " + programAddress);
+            throw new RuntimeException("Error: program address is null.");
         }
     }
     
