@@ -12,7 +12,7 @@ public abstract class ProcessTable {
     // Possible processes
     private static Deque<ProcessControlBlock> readyProcesses = new LinkedList<>();
     private static ProcessControlBlock executionProcess = new ProcessControlBlock(0, RegisterFile.getInitialProgramCounter(), ProcessControlBlock.ProcessState.RUNNING);
-    
+   
     // PID is unique and incremets for each new process
     public static int getPID() {
         return PID++;
@@ -36,10 +36,10 @@ public abstract class ProcessTable {
     
     /**
      * Changes the execution process state.
-     * 
      * @param newState New process state
      */
     public static void changeState(ProcessControlBlock.ProcessState newState) {
+
         executionProcess.setState(newState);
     }
     
