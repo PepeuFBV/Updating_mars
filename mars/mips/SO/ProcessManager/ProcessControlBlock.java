@@ -76,7 +76,7 @@ public class ProcessControlBlock {
 	 * Method for displaying the register values for debugging.
 	 *
 	 */
-	public static void showRegisters() {
+	public void showRegisters() {
 		for (Register rf : regFile) {
 			System.out.println("Name: " + rf.getName());
 			System.out.println("Number: " + rf.getNumber());
@@ -85,14 +85,14 @@ public class ProcessControlBlock {
 		}
 	}
 
-	public static Register[] getRegisters() {
+	public Register[] getRegisters() {
 		return regFile;
 	}
 
 	// More special registers
-	private static Register programCounter = new Register("pc", 32, Memory.textBaseAddress);
-	private static Register hi = new Register("hi", 33, 0);// this is an internal register with arbitrary number
-	private static Register lo = new Register("lo", 34, 0);// this is an internal register with arbitrary number
+	private Register programCounter = new Register("pc", 32, Memory.textBaseAddress);
+	private Register hi = new Register("hi", 33, 0);// this is an internal register with arbitrary number
+	private Register lo = new Register("lo", 34, 0);// this is an internal register with arbitrary number
 
 	public Register getProgramCounter() {
         return programCounter;
