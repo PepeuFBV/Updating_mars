@@ -1,7 +1,5 @@
 package mars.mips.instructions.syscalls;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mars.ProcessingException;
 import mars.ProgramStatement;
 import mars.mips.SO.ProcessManager.ProcessControlBlock;
@@ -30,17 +28,13 @@ public class SyscallProcessChange extends AbstractSyscall {
     public void simulate(ProgramStatement statement) throws ProcessingException {
         ProcessControlBlock process = ProcessTable.getExecutionProcess();
         
-        process.copyFromHardware(); // Save the process's context
+        process.copyFromHardware(); // Save the process context
         
-        // Change the process's state and adds to ready process list
-        try {
-            ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
-            ProcessTable.getReadyProcesses().addLast(process);
-        } catch (Exception ex) {
-            Logger.getLogger(SyscallProcessChange.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // Change the process state and add it to the list of ready processes
+        ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
+        ProcessTable.getReadyProcesses().addLast(process);
         
-        Scheduler.schedule();
+        Scheduler.fifo();
         
         // For debug purposes
         ProcessTable.listProcesses();

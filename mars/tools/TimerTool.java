@@ -3,10 +3,7 @@ package mars.tools;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Observable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import mars.mips.SO.ProcessManager.ProcessControlBlock;
 import mars.mips.SO.ProcessManager.ProcessTable;
@@ -14,7 +11,6 @@ import mars.mips.SO.ProcessManager.Scheduler;
 import mars.mips.hardware.AccessNotice;
 import mars.mips.hardware.Memory;
 import mars.mips.hardware.MemoryAccessNotice;
-import mars.mips.instructions.syscalls.SyscallProcessChange;
 
 public class TimerTool extends AbstractMarsToolAndApplication {
 
@@ -78,28 +74,23 @@ public class TimerTool extends AbstractMarsToolAndApplication {
 		c.gridx = 5;
 		panel.add(schedulingAlgorithmComboBox, c);
 
-		startButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					interruptInterval = Integer.parseInt(intervalField.getText());
-				} catch (NumberFormatException ex) {
-					interruptInterval = 1;
-					intervalField.setText(Integer.toString(interruptInterval));
-				}
-				instructionCount = 0;
-			}
-		});
+		startButton.addActionListener((ActionEvent e) -> {
+            try {
+                interruptInterval = Integer.parseInt(intervalField.getText());
+            } catch (NumberFormatException ex) {
+                interruptInterval = 1;
+                intervalField.setText(Integer.toString(interruptInterval));
+            }
+            System.out.println("interrupt interval : " + interruptInterval);
+            instructionCount = 0;
+        });
 
-		helpButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "This is the Timer Tool of MARS.\n"
-						+ "You can configure the interrupt interval and start the timer with the 'Start Timer' button.\n"
-						+ "When the number of executed instructions reaches the specified interval, an interrupt occurs.\n"
-						+ "For more information, consult the MARS documentation.");
-			}
-		});
+		helpButton.addActionListener((ActionEvent e) -> {
+            JOptionPane.showMessageDialog(null, "This is the Timer Tool of MARS.\n"
+                    + "You can configure the interrupt interval and start the timer with the 'Start Timer' button.\n"
+                    + "When the number of executed instructions reaches the specified interval, an interrupt occurs.\n"
+                    + "For more information, consult the MARS documentation.");
+        });
 
 		return panel;
 	}
@@ -121,7 +112,6 @@ public class TimerTool extends AbstractMarsToolAndApplication {
 
 		if (address >= Memory.textBaseAddress && address <= Memory.textLimitAddress) {
 			instructionCount++;
-			System.out.println("Instruction count: " + instructionCount);
 
 			if (instructionCount == interruptInterval) {
 				handleTimerInterrupt();
@@ -141,36 +131,28 @@ public class TimerTool extends AbstractMarsToolAndApplication {
 
 		process.copyFromHardware();
 
-		try {
-			ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
-			ProcessTable.getReadyProcesses().addLast(process);
-		} catch (Exception ex) {
-			Logger.getLogger(SyscallProcessChange.class.getName()).log(Level.SEVERE, null, ex);
-		}
+        ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
+        ProcessTable.getReadyProcesses().addLast(process);
 
 		// Here, call the appropriate scheduling algorithm based on the selected option
 		switch (schedulingAlgorithmComboBox.getSelectedItem().toString()) {
 		case "FIFO":
-			Scheduler.schedule();
-			break;
-		case "Priority":
-			// Implement the logic for scheduling by fixed priority
-			// It will be handled in Scheduler.schedule() method
-			Scheduler.schedule();
+            process.showRegisters();
+			Scheduler.fifo();
+			process.showRegisters();
+            break;
+		case "Priority":			
+			Scheduler.priority();
 			break;
 		case "Lottery":
-			// Implement the logic for lottery scheduling
-			// It will be handled in Scheduler.schedule() method
-			Scheduler.schedule();
+			Scheduler.lottery();
 			break;
 		default:
-			Scheduler.schedule(); // Default to FIFO
+			Scheduler.fifo();
 			break;
 		}
 
 		ProcessTable.listProcesses();
-
-		System.out.println("Timer interrupt at instruction count: " + instructionCount);
 	}
 
 	@Override

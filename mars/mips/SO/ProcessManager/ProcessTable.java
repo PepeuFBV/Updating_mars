@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import mars.mips.hardware.RegisterFile;
 
 public abstract class ProcessTable {
-  
+    
 	// Initial generated PID value for new processes
 	private static int PID = 1;
 
@@ -29,7 +29,7 @@ public abstract class ProcessTable {
 		ProcessTable.executionProcess = executionProcess;
 	}
 
-  // PID is unique and incremets for each new process
+    // PID is unique and increments for each new process
 	public static int getPID() {
 		return PID++;
 	}
@@ -46,15 +46,15 @@ public abstract class ProcessTable {
 	 * Method for displaying all processes for debugging.
 	 */
 	public static void listProcesses() {
-        System.out.println("PID\tAddress\tState");
-
+        System.out.println("PID\tAddress\tState\tPriority");
+        
         // Show ready processes
-        for (ProcessControlBlock processo : readyProcesses) {
-            System.out.println(processo.getPid() + "\t" + processo.getProgramAddress() + "\t" + processo.getState());
+        for (ProcessControlBlock process : readyProcesses) {
+            System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority());
         }
         
         // Show execution process
-        System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState());
+        System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState() + "\t" + executionProcess.getPriority());
 	}
 
 	private static SchedulerE schedulingAlgorithm = SchedulerE.FIFO;

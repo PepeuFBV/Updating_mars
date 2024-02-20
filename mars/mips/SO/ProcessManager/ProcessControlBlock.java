@@ -6,7 +6,7 @@ import mars.mips.hardware.RegisterFile;
 
 public class ProcessControlBlock {
   
-  // Process priority
+    // Process priority
 	private int priority;
 
 	// Special registers storage
@@ -40,7 +40,7 @@ public class ProcessControlBlock {
 	 * @param pid            Integer value that serves as process identifier
 	 * @param programAddress Address of the start of the program
 	 * @param state          The current state of the process
-	 *
+     * @param priority
 	 */
 	public ProcessControlBlock(int pid, int programAddress, ProcessState state, int priority) {
 		try {
@@ -76,24 +76,23 @@ public class ProcessControlBlock {
 	 * Method for displaying the register values for debugging.
 	 *
 	 */
-	public static void showRegisters() {
+	public void showRegisters() {
+        System.out.println("Process " + pid + " " + programAddress + " " + state + " " + priority + " registers:");
 		for (Register rf : regFile) {
 			System.out.println("Name: " + rf.getName());
-			System.out.println("Number: " + rf.getNumber());
 			System.out.println("Value: " + rf.getValue());
-			System.out.println("");
 		}
 	}
-
-	public static Register[] getRegisters() {
+    
+	public Register[] getRegisters() {
 		return regFile;
 	}
-
+    
 	// More special registers
-	private static Register programCounter = new Register("pc", 32, Memory.textBaseAddress);
-	private static Register hi = new Register("hi", 33, 0);// this is an internal register with arbitrary number
-	private static Register lo = new Register("lo", 34, 0);// this is an internal register with arbitrary number
-
+	private Register programCounter = new Register("pc", 32, Memory.textBaseAddress);
+	private Register hi = new Register("hi", 33, 0);// this is an internal register with arbitrary number
+	private Register lo = new Register("lo", 34, 0);// this is an internal register with arbitrary number
+    
 	public Register getProgramCounter() {
         return programCounter;
     }

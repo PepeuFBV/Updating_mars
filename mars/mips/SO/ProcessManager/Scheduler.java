@@ -4,32 +4,12 @@ import java.util.Random;
 
 public abstract class Scheduler {
 
-	private static Random random = new Random();
-
-	/**
-	 * Method for scheduling the next ready process.
-	 */
-	public static void schedule() {
-		switch (ProcessTable.getSchedulingAlgorithm()) {
-		case FIFO:
-			scheduleFIFO();
-			break;
-		case PRIORITY:
-			schedulePriority();
-			break;
-		case LOTTERY:
-			scheduleLottery();
-			break;
-		default:
-			scheduleFIFO(); // Default to FIFO
-			break;
-		}
-	}
+	private static final Random random = new Random();
 
 	/**
 	 * Schedule process using First-In-First-Out algorithm.
 	 */
-	private static void scheduleFIFO() {
+	public static void fifo() {
 		ProcessControlBlock nextProcess;
 		if (!ProcessTable.getReadyProcesses().isEmpty()) {
 			nextProcess = ProcessTable.getReadyProcesses().pop(); // Remove the process from ready process list
@@ -42,7 +22,7 @@ public abstract class Scheduler {
 	/**
 	 * Schedule process using Fixed Priority algorithm.
 	 */
-	private static void schedulePriority() {
+	public static void priority() {
 		ProcessControlBlock highestPriorityProcess = null;
 		int highestPriority = Integer.MIN_VALUE;
 
@@ -64,12 +44,11 @@ public abstract class Scheduler {
 	/**
 	 * Schedule process using Lottery algorithm.
 	 */
-	private static void scheduleLottery() {
+	public static void lottery() {
 		if (!ProcessTable.getReadyProcesses().isEmpty()) {
 			int totalTickets = 0;
 			for (ProcessControlBlock process : ProcessTable.getReadyProcesses()) {
-				totalTickets += process.getPriority(); // Suponha que a prioridade do processo é usada como número de
-														// bilhetes
+                totalTickets += process.getPriority();
 			}
 
 			int winningTicket = random.nextInt(totalTickets);
