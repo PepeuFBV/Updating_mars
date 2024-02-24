@@ -26,15 +26,17 @@ public class SyscallProcessChange extends AbstractSyscall {
      */
     @Override
     public void simulate(ProgramStatement statement) throws ProcessingException {
-        ProcessControlBlock process = ProcessTable.getExecutionProcess();
-        
-        process.copyFromHardware(); // Save the process context
-        
-        // Change the process state and add it to the list of ready processes
-        ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
-        ProcessTable.getReadyProcesses().addLast(process);
-        
-        Scheduler.fifo();
+        if (!ProcessTable.getReadyProcesses().isEmpty()) {
+            ProcessControlBlock process = ProcessTable.getExecutionProcess();
+
+            process.copyFromHardware(); // Save the process context
+
+            // Change the process state and add it to the list of ready processes
+            ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
+            ProcessTable.getReadyProcesses().addLast(process);
+
+            Scheduler.fifo();
+        }
         
         // For debug purposes
         ProcessTable.listProcesses();

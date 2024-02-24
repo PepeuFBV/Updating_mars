@@ -11,7 +11,7 @@ public abstract class ProcessTable {
 
 	// Possible processes
 	private static Deque<ProcessControlBlock> readyProcesses = new LinkedList<>();
-	private static ProcessControlBlock executionProcess = new ProcessControlBlock(0,RegisterFile.getInitialProgramCounter(), ProcessControlBlock.ProcessState.RUNNING);
+	private static ProcessControlBlock executionProcess = new ProcessControlBlock(0,RegisterFile.getInitialProgramCounter(), ProcessControlBlock.ProcessState.RUNNING, 5);
 
 	public static Deque<ProcessControlBlock> getReadyProcesses() {
 		return readyProcesses;
@@ -63,8 +63,12 @@ public abstract class ProcessTable {
         return schedulingAlgorithm;
     }
 
-    public static void setSchedulingAlgorithm(SchedulerE algorithm) {
-        schedulingAlgorithm = algorithm;
+    public static void setSchedulingAlgorithm(String algorithm) {
+        switch (algorithm) {
+            case "FIFO" -> schedulingAlgorithm = SchedulerE.FIFO;
+            case "Priority" -> schedulingAlgorithm = SchedulerE.PRIORITY;
+            case "Lottery" -> schedulingAlgorithm = SchedulerE.LOTTERY;
+        }
     }
 
 }

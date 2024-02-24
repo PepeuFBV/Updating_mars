@@ -8,10 +8,10 @@ import java.util.Observable;
 import mars.mips.SO.ProcessManager.ProcessControlBlock;
 import mars.mips.SO.ProcessManager.ProcessTable;
 import mars.mips.SO.ProcessManager.Scheduler;
+import mars.mips.SO.ProcessManager.SchedulerE;
 import mars.mips.hardware.AccessNotice;
 import mars.mips.hardware.Memory;
 import mars.mips.hardware.MemoryAccessNotice;
-import mars.mips.hardware.RegisterFile;
 
 public class TimerTool extends AbstractMarsToolAndApplication {
 
@@ -24,6 +24,7 @@ public class TimerTool extends AbstractMarsToolAndApplication {
     private int instructionCount = 0;
     private int interruptInterval = 1; // Default value of interrupt interval
     private JComboBox<String> schedulingAlgorithmComboBox;
+    private static String schedulingAlgorithm;
 
     private JTextField intervalField;
     private JButton startButton;
@@ -119,12 +120,8 @@ public class TimerTool extends AbstractMarsToolAndApplication {
 
             isScheduling = false;
             if (instructionCount == interruptInterval) {
-                
-                // If next PC value is equals to execution process PC value, increment PC
-                if (ProcessTable.getExecutionProcess().getProgramCounter().getValue() == RegisterFile.getProgramCounter() - 4)
-                    RegisterFile.incrementPC();
-                
-                handleTimerInterrupt();
+                schedulingAlgorithm = schedulingAlgorithmComboBox.getSelectedItem().toString();
+                ProcessTable.setSchedulingAlgorithm(schedulingAlgorithm);
                 instructionCount = 0;
                 isScheduling = true;
             }
@@ -136,30 +133,16 @@ public class TimerTool extends AbstractMarsToolAndApplication {
         counterField.setText(Integer.toString(instructionCount));
     }
 
-    private void handleTimerInterrupt() {
-        ProcessControlBlock process = ProcessTable.getExecutionProcess();
-        
-        process.copyFromHardware();
-        
-        ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
-        ProcessTable.getReadyProcesses().addLast(process);
+    public static void handleTimerInterrupt() {
+        if (!ProcessTable.getReadyProcesses().isEmpty()) {
+            ProcessControlBlock process = ProcessTable.getExecutionProcess();
+            process.copyFromHardware();
+            ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
 
-        // Here, call the appropriate scheduling algorithm based on the selected option
-        switch (schedulingAlgorithmComboBox.getSelectedItem().toString()) {
-            case "FIFO":
-                Scheduler.fifo();
-                break;
-            case "Priority":
-                Scheduler.priority();
-                break;
-            case "Lottery":
-                Scheduler.lottery();
-                break;
-            default:
-                Scheduler.fifo();
-                break;
+            Scheduler.schedule();
+
+            ProcessTable.getReadyProcesses().addLast(process);
         }
-        
         ProcessTable.listProcesses();
     }
 

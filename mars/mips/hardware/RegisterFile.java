@@ -307,7 +307,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
        *  Method to increment the Program counter in the general case (not a jump or branch).
    	 **/
    
-       public static void incrementPC(){
+       public synchronized static void incrementPC(){
          programCounter.setValue(programCounter.getValue() + Instruction.INSTRUCTION_LENGTH);
       }
    

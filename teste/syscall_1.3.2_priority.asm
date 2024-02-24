@@ -3,9 +3,9 @@
 .data
 .text
 	# o processo principal cria 3 processos filhos
-	SyscallFork(Programa1)
-	SyscallFork(Programa2)
-	SyscallFork(Idle)
+	SyscallFork(Programa1, 1)
+	SyscallFork(Programa2, 2)
+	SyscallFork(Idle, 0)
 
 	# encerrando o processo principal
 	SyscallProcessTerminate

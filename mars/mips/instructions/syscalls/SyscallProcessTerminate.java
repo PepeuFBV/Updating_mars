@@ -22,7 +22,7 @@ public class SyscallProcessTerminate extends AbstractSyscall {
      */
     @Override
     public void simulate(ProgramStatement statement) throws ProcessingException {
-        Scheduler.fifo();
+        Scheduler.schedule();
         
         // For debug purposes
         ProcessTable.listProcesses();

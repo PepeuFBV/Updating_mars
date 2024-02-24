@@ -8,6 +8,7 @@ import mars.mips.instructions.*;
 import java.util.*;
 import javax.swing.*;
 import mars.tools.TimerTool;
+import mars.mips.SO.ProcessManager.ProcessTable;
 
 /*
 Copyright (c) 2003-2010,  Pete Sanderson and Kenneth Vollmar
@@ -333,8 +334,11 @@ public class Simulator extends Observable {
             while (statement != null) {
                 pc = RegisterFile.getProgramCounter(); // added: 7/26/06 (explanation above)
 
-                // Only updates PC if TimerTool is not calling scheduler
-                if (!TimerTool.isScheduling()) {
+                // If TimerTool is calling scheduler and the ready process list is empty,
+                // returns pc value to old value
+                if (TimerTool.isScheduling()) {
+                    TimerTool.handleTimerInterrupt();
+                } else {
                     RegisterFile.incrementPC();
                 }
 
@@ -356,7 +360,8 @@ public class Simulator extends Observable {
                                     Exceptions.RESERVED_INSTRUCTION_EXCEPTION);
                         }
                         // THIS IS WHERE THE INSTRUCTION EXECUTION IS ACTUALLY SIMULATED!
-                        instruction.getSimulationCode().simulate(statement);
+                        if (!TimerTool.isScheduling())
+                            instruction.getSimulationCode().simulate(statement);
 
                         // IF statement added 7/26/06 (explanation above)
                         if (Globals.getSettings().getBackSteppingEnabled()) {
