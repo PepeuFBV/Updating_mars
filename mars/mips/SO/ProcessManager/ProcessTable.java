@@ -5,13 +5,23 @@ import java.util.LinkedList;
 import mars.mips.hardware.RegisterFile;
 
 public abstract class ProcessTable {
-    
+
 	// Initial generated PID value for new processes
 	private static int PID = 1;
 
 	// Possible processes
 	private static Deque<ProcessControlBlock> readyProcesses = new LinkedList<>();
+	private static Deque<ProcessControlBlock> blockedProcesses = new LinkedList<>();
 	private static ProcessControlBlock executionProcess = new ProcessControlBlock(0,RegisterFile.getInitialProgramCounter(), ProcessControlBlock.ProcessState.RUNNING, 5);
+	private static int[] semaphores;
+
+	public static void setSemaphores(int[] semaphores) {
+		ProcessTable.semaphores = semaphores;
+	}
+
+	public static int[] getSemaphores() {
+		return semaphores;
+	}
 
 	public static Deque<ProcessControlBlock> getReadyProcesses() {
 		return readyProcesses;
@@ -19,6 +29,14 @@ public abstract class ProcessTable {
 
 	public static void setReadyProcesses(Deque<ProcessControlBlock> readyProcesses) {
 		ProcessTable.readyProcesses = readyProcesses;
+	}
+
+	public static Deque<ProcessControlBlock> getBlockedProcesses() {
+		return blockedProcesses;
+	}
+
+	public static void setBlockedProcesses(Deque<ProcessControlBlock> blockedProcesses) {
+		ProcessTable.blockedProcesses = blockedProcesses;
 	}
 
 	public static ProcessControlBlock getExecutionProcess() {

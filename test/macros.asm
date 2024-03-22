@@ -79,3 +79,27 @@
 	li $v0, 20
 	syscall
 .end_macro
+
+.macro SyscallCreateSemaphore(%init)
+	la $a0, %init
+	li $v0, 21
+	syscall
+.end_macro
+
+.macro SyscallTerminateSemaphore(%address)
+	la $a0, %address
+	li $v0, 22
+	syscall
+.end_macro
+
+.macro SyscallDownSemaphore(%address)
+	la $a0, %address
+	li $v0, 23
+	syscall
+.end_macro
+
+.macro SyscallUpSemaphore(%address)
+	la $a0, %address
+	li $v0, 24
+	syscall
+.end_macro
