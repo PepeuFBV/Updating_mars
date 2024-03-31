@@ -334,12 +334,13 @@ public class Simulator extends Observable {
             while (statement != null) {
                 pc = RegisterFile.getProgramCounter(); // added: 7/26/06 (explanation above)
 
-                // If TimerTool is calling scheduler and the ready process list is empty,
-                // returns pc value to old value
-                if (TimerTool.isScheduling()) {
-                    TimerTool.handleTimerInterrupt();
+                // Verify TimerTool is scheduling and ready processes queue isn't empty.
+                boolean executeInstruction = TimerTool.isScheduling() && !ProcessTable.getReadyProcesses().isEmpty();
+                if (executeInstruction) {
+                    System.out.println("Handle Timer Interrupt");
+                    TimerTool.handleTimerInterrupt(); // Save context and calls scheduler
                 } else {
-                    RegisterFile.incrementPC();
+                    RegisterFile.incrementPC(); // Increment Program Counter
                 }
 
                 // Perform the MIPS instruction in synchronized block.  If external threads agree
@@ -360,8 +361,9 @@ public class Simulator extends Observable {
                                     Exceptions.RESERVED_INSTRUCTION_EXCEPTION);
                         }
                         // THIS IS WHERE THE INSTRUCTION EXECUTION IS ACTUALLY SIMULATED!
-                        if (!TimerTool.isScheduling())
+                        if (!executeInstruction) {
                             instruction.getSimulationCode().simulate(statement);
+                        }
 
                         // IF statement added 7/26/06 (explanation above)
                         if (Globals.getSettings().getBackSteppingEnabled()) {

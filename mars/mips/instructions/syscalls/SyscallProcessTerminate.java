@@ -4,6 +4,7 @@ import mars.ProcessingException;
 import mars.ProgramStatement;
 import mars.mips.SO.ProcessManager.ProcessTable;
 import mars.mips.SO.ProcessManager.Scheduler;
+import mars.tools.TimerTool;
 
 public class SyscallProcessTerminate extends AbstractSyscall {
     
@@ -22,10 +23,13 @@ public class SyscallProcessTerminate extends AbstractSyscall {
      */
     @Override
     public void simulate(ProgramStatement statement) throws ProcessingException {
-        Scheduler.schedule();
-        
-        // For debug purposes
-        ProcessTable.listProcesses();
+        if (!TimerTool.isScheduling()) {
+            Scheduler.schedule();
+            
+            // For debug purposes
+            System.out.println("Syscall Process Terminate");
+            ProcessTable.listProcesses();
+        }
     }
     
 }

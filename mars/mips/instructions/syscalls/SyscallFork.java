@@ -28,11 +28,16 @@ public class SyscallFork extends AbstractSyscall {
         // Gets the initial address of the process in $a0
         int processAddress = RegisterFile.getValue(4);
         
-        // Gets the priority value in $a1
-        int priority = RegisterFile.getValue(5);
-        
         // Instantiate a new PCB for the process
-        ProcessControlBlock fork = new ProcessControlBlock(ProcessTable.getPID(), processAddress, ProcessControlBlock.ProcessState.READY, priority);
+        ProcessControlBlock fork = new ProcessControlBlock(ProcessTable.getPID(), processAddress, ProcessControlBlock.ProcessState.READY);
+        
+        // If SyscallFork(address, priority) has been called
+        if (RegisterFile.getValue(6) == 1) { 
+            // Gets the priority value in $a1
+            int priority = RegisterFile.getValue(5);
+            
+            fork.setPriority(priority);
+        }
         
         // Save the actual context, same as execution process
         fork.copyFromHardware();
@@ -44,6 +49,7 @@ public class SyscallFork extends AbstractSyscall {
         ProcessTable.getReadyProcesses().addLast(fork);
         
         // For debug purposes
+        System.out.println("Syscall Fork");
         ProcessTable.listProcesses();
     }
     
