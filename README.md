@@ -34,3 +34,20 @@ The project was developed under the Operating Systems course at the Federal Univ
 - Pedro Figueira
 - Samuel Rogenes
 - Vinícius Gabriel
+
+
+## Implementation Steps
+
+The project was divided into the following steps:
+
+- Step 1: PCB Creation and Process Scheduling
+- Step 2: Syscalls Implementation for Process Management
+- Step 3.1: Preemptive Scheduling
+- Step 3.2: New Scheduling Algorithms
+- Step 4: Process Synchronization through Semaphores
+---
+### Step 1: PCB Creation and Process Scheduling
+
+The first step of the project was to create the PCB structure and implement the process scheduling. The PCB structure was created with the following fields:
+
+
