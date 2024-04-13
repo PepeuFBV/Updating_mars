@@ -30,6 +30,11 @@ public class SyscallFork extends AbstractSyscall {
         
         // Instantiate a new PCB for the process
         ProcessControlBlock fork = new ProcessControlBlock(ProcessTable.getPID(), processAddress, ProcessControlBlock.ProcessState.READY);
+        fork.setSuperiorLimit(processAddress);
+        
+        if (!ProcessTable.getReadyProcesses().isEmpty()) {
+        	ProcessTable.getReadyProcesses().getLast().setInferiorLimit(processAddress - 4);
+        }
         
         // If SyscallFork(address, priority) has been called
         if (RegisterFile.getValue(6) == 1) { 

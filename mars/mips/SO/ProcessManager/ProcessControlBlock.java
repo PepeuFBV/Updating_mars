@@ -8,6 +8,25 @@ public class ProcessControlBlock {
 
     // Process priority
     private int priority;
+    private int inferiorLimit;
+    
+    public int getInferiorLimit() {
+		return inferiorLimit;
+	}
+
+	public void setInferiorLimit(int inferiorLimit) {
+		this.inferiorLimit = inferiorLimit;
+	}
+
+	public int getSuperiorLimit() {
+		return superiorLimit;
+	}
+
+	public void setSuperiorLimit(int superiorLimit) {
+		this.superiorLimit = superiorLimit;
+	}
+
+	private int superiorLimit;
 
     // Special registers storage
     public static final int GLOBAL_POINTER_REGISTER = 28;
@@ -48,6 +67,18 @@ public class ProcessControlBlock {
             setProgramAddress(programAddress);
             this.state = state;
             this.priority = priority;
+        } catch (RuntimeException e) {
+            System.err.println("Error: ProcessControlBlock creation failed.");
+        }
+    }
+    
+    public ProcessControlBlock(int pid, int programAddress, ProcessState state, int priority, int superiorLimit) {
+        try {
+            this.pid = pid;
+            setProgramAddress(programAddress);
+            this.state = state;
+            this.priority = priority;
+            this.superiorLimit = superiorLimit;
         } catch (RuntimeException e) {
             System.err.println("Error: ProcessControlBlock creation failed.");
         }

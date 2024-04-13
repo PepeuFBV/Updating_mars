@@ -12,7 +12,7 @@ public abstract class ProcessTable {
 
     // Possible processes
     private static Deque<ProcessControlBlock> readyProcesses = new LinkedList<>();
-    private static ProcessControlBlock executionProcess = new ProcessControlBlock(0, RegisterFile.getInitialProgramCounter(), ProcessControlBlock.ProcessState.RUNNING, 10);
+    private static ProcessControlBlock executionProcess = new ProcessControlBlock(0, RegisterFile.getInitialProgramCounter(), ProcessControlBlock.ProcessState.RUNNING, 10, 4194304);
 
     public static Deque<Semaphore> semaphores = new LinkedList<>();
 
@@ -50,20 +50,23 @@ public abstract class ProcessTable {
      * Method for displaying all processes for debugging.
      */
     public static void listProcesses() {
-        System.out.println("PID\tAddress\tState\tPriority");
+        System.out.println("PID\tAddress\tState\tPriority\tSuperiorLimit\tInferiorLimit");
 
         // Show execution process
-        System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState() + "\t" + executionProcess.getPriority());
+        System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState() + "\t" + executionProcess.getPriority() + 
+        		"\t\t" + executionProcess.getSuperiorLimit() + "\t\t" + executionProcess.getInferiorLimit());
 
         // Show ready processes
         for (ProcessControlBlock process : readyProcesses) {
-            System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority());
+            System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority() +
+            "\t\t" + process.getSuperiorLimit() + "\t\t" + process.getInferiorLimit());
         }
 
         // Show blocked processes
         for (var semaphore : semaphores) {
             for (var process : semaphore.getBlockedProcesses()) {
-                System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority());
+                System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority() +
+                		"\t\t" + process.getSuperiorLimit() + "\t\t" + process.getInferiorLimit());
             }
         }
         System.out.println();
