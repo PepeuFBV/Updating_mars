@@ -8,9 +8,9 @@ public abstract class Scheduler {
 
     public static void schedule() {
         switch (ProcessTable.getSchedulingAlgorithm()) {
-            case SchedulerE.FIFO -> fifo();
-            case SchedulerE.PRIORITY -> priority();
-            case SchedulerE.LOTTERY -> lottery();
+            case FIFO -> fifo();
+            case PRIORITY -> priority();
+            case LOTTERY -> lottery();
         }
     }
     
