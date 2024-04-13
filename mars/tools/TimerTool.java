@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
-
 import mars.mips.SO.ProcessManager.ProcessControlBlock;
 import mars.mips.SO.ProcessManager.ProcessTable;
 import mars.mips.SO.ProcessManager.Scheduler;
