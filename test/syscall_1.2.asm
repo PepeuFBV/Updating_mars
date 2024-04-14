@@ -18,7 +18,7 @@ Idle:
 	loop:
 		SyscallProcessChange
 		j loop
-
+		
 # loop chama o escalonador 10 vezes e encerra
 Programa1:
 	addi $s1, $zero, 1 # valor inicial do contador

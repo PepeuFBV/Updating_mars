@@ -1,9 +1,13 @@
 package mars.mips.instructions.syscalls;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.lang.reflect.Array;
 import mars.Globals;
 import mars.ProcessingException;
 import mars.ProgramStatement;
-import mars.assembler.SourceLine;
+import mars.assembler.SymbolTable;
 import mars.mips.SO.ProcessManager.ProcessControlBlock;
 import mars.mips.SO.ProcessManager.ProcessTable;
 import mars.mips.hardware.RegisterFile;
@@ -58,8 +62,14 @@ public class SyscallFork extends AbstractSyscall {
         // Add the new process in the process table
         ProcessTable.getReadyProcesses().addLast(fork);
 
-        for (var e : Globals.program.getMachineList()) {
-            System.out.println(e);
+        Map<String, Integer> jumps = new LinkedHashMap<>();
+        List<ProgramStatement> machineList = Globals.program.getMachineList();
+        SymbolTable table = Globals.program.getLocalSymbolTable();
+        for (ProgramStatement e : machineList) {
+            if (e.getInstruction().getName().equals("j")){
+                System.out.println("Instrução: " + e.getSource().split(" ")[1] + " - " + table.getAddress(e.getSource().split(" ")[1]));
+                jumps.put(e.getSource().split(" ")[1], table.getAddress(e.getSource().split(" ")[1]));
+            }
         }
 
         // For debug purposes

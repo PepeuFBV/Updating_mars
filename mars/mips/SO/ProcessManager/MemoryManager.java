@@ -74,7 +74,6 @@ public abstract class MemoryManager {
         // Verifica se há um bloco livre para carregar novas instruções
         boolean freeblock1 = false;
 
-
         for (int i = 0; i < blocos.length; i++) {
             if (blocos[i] == null) {
                 freeblock1 = true;
