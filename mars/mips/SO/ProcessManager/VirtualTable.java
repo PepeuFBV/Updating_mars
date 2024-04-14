@@ -5,15 +5,15 @@ import java.util.Map;
 
 public class VirtualTable {
 
-  class Block {
-    public int[] instructions = new int[MemoryManager.tamPagVirtual];
+    public class Block {
 
-    public Block(int[] instructions) {
-      for (int i = 0; i < instructions.length; i++) {
-        this.instructions[i] = instructions[i];
-      }
+        public int[] instructions = new int[MemoryManager.tamPagVirtual];
+
+        public Block(int[] instructions) {
+            System.arraycopy(instructions, 0, this.instructions, 0, instructions.length);
+        }
     }
-  }
 
-  public static Map<ProcessControlBlock, Block[]> tabelaPaginas = new LinkedHashMap<>();
+    public static final Map<ProcessControlBlock, Block[]> pagesTable = new LinkedHashMap<>();
+    
 }
