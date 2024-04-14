@@ -38,14 +38,20 @@ The project was developed under the Operating Systems course at the Federal Univ
 
 ## Implementation Steps
 
-The project was divided into the following steps:
+The project was divided into the following parts:
 
-- Step 1: PCB Creation, Process Table and Process Scheduling
-- Step 2: Syscalls Implementation for Process Management
-- Step 3.1: Preemptive Scheduling
-- Step 3.2: New Scheduling Algorithms
-- Step 4: Process Synchronization through Semaphores
+- Part 1
+    - Step 1: PCB Creation, Process Table and Process Scheduling
+    - Step 2: Syscalls Implementation for Process Management
+    - Step 3.1: Preemptive Scheduling
+    - Step 3.2: New Scheduling Algorithms
+    - Step 4: Process Synchronization through Semaphores
+- Part 2
+    - Step 1: Virtual Memory Management
+    - Step 2: Page Table Implementation
+
 ---
+
 ### Step 1: PCB Creation, Process Table and Process Scheduling
 
 #### Process Control Block (PCB) Structure and Implementation
@@ -127,3 +133,93 @@ SyscallProcessChange
 
 ---
 ### Step 3.1: Preemptive Scheduling
+
+For the preemptive scheduling, the project was modified by the creation of a timer tool. The timer tool was implemented to interrupt the process in execution after a certain time. The user is able to set the time for the timer tool through inputing the number of instructions that the process in execution will execute before being interrupted, there are also 3 more options: Connect to MIPS, reset, help and exit. When the process is interrupted, the timer is reset and starts counting again.
+
+The interruption switches the process in execution to the ready queue and the next process starts to execute. This mechanism is a substitute for `SyscallProcessChange` and is used to implement the preemptive scheduling.
+
+Extra - For testing purposes the following assembly code was used:
+
+```assembly	
+.include "macros.asm"
+
+.data
+.text             
+	#criação dos processos
+SyscallFork(Programa1)
+	SyscallFork(Programa2)
+	SyscallFork(Idle)
+	#escalonando o primeiro processo
+SyscallProcessChange
+	
+Idle:					
+	loop:
+NOP
+j loop
+```
+
+```assembly
+Programa1:					
+		addi $s1, $zero, 1 # valor inicial do contador
+		addi $s2, $zero, 10 # valor limite do contador
+	loop1: 	addi $s1, $s1, 1
+		beq $s1, $s2, fim1
+j loop1
+	fim1:	SyscallProcessTerminate
+
+Programa2: 
+		addi $s1, $zero, -1 # valor inicial do contador
+		addi $s2, $zero, -10 # valor limite do contador
+	loop2: 	addi $s1, $s1, -1
+		beq $s1, $s2, fim2
+		j loop2
+	fim2:	SyscallProcessTerminate
+```
+
+---
+### Step 3.2: New Scheduling Algorithms
+
+For the new scheduling algorithms, the project was modified by the creation of two new scheduling algorithms: Fixed Priority and Lottery. The Fixed Priority algorithm is a preemptive scheduling algorithm that assigns a priority to each process and the process with the highest priority is the one that will be executed. The Lottery algorithm is a non-preemptive scheduling algorithm that assigns a number of tickets to each process and the process that wins the lottery is the one that will be executed (in our implementation, the process is chosen randomly).
+
+In the Timer Tool, the user is able to choose the scheduling algorithm that will be used.
+
+Extra - For testing purposes the following assembly code was used:
+
+```assembly
+.include "macros.asm"
+
+.data
+.text             
+      #criação dos processos com prioridade
+SyscallFork(Programa1, 1)
+	SyscallFork(Programa2, 2)
+	SyscallFork(Idle, 0)
+	#escalonando o primeiro processo
+SyscallProcessChange
+	
+Idle:					
+	loop:
+NOP
+j loop
+```
+
+```assembly
+Programa1:					
+		addi $s1, $zero, 1 # valor inicial do contador
+		addi $s2, $zero, 10 # valor limite do contador
+	loop1: 	addi $s1, $s1, 1
+		beq $s1, $s2, fim1
+j loop1
+	fim1:	SyscallProcessTerminate
+
+Programa2: 
+		addi $s1, $zero, -1 # valor inicial do contador
+		addi $s2, $zero, -10 # valor limite do contador
+	loop2: 	addi $s1, $s1, -1
+		beq $s1, $s2, fim2
+		j loop2
+	fim2:	SyscallProcessTerminate
+```
+
+---
+### Step 4: Process Synchronization through Semaphores
