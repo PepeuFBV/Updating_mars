@@ -36,18 +36,27 @@ public abstract class MemoryManager {
         readyProcs.addFirst(ProcessTable.getExecutionProcess());
 
         // Defines the memory limits of each process created so far
-        for (int i = 0; i < readyProcs.size(); i++) {
+        boolean conflict;
+        do {
+            conflict = false;
             for (var p : readyProcs) {
                 int upperP = p.getUpperLimit();
                 int lowerP = p.getLowerLimit();
 
                 if (upper >= upperP && upper <= lowerP) {
                     p.setLowerLimit(upper - 4);
+                    System.out.println("Conflict Sup detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit() + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: " + upper);
+                    conflict = true;
                 } else if (lower >= upperP && lower <= lowerP) {
                     process.setLowerLimit(upperP - 4);
-                }
+                    System.out.println("Conflict Inf detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit() + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: " + upper);
+                    conflict = true;
+                } 
+                
+                
             }
-        }
+
+        } while (conflict);
 
         readyProcs.removeFirst();
     }
