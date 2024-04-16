@@ -53,20 +53,20 @@ public abstract class ProcessTable {
         System.out.println("PID\tAddress\tState\tPriority\tUpperLimit\tLowerLimit");
 
         // Show execution process
-        System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState() + "\t" + executionProcess.getPriority() + 
-        		"\t\t" + executionProcess.getUpperLimit() + "\t\t" + executionProcess.getLowerLimit());
+        System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState() + "\t" + executionProcess.getPriority()
+                + "\t\t" + executionProcess.getUpperLimit() + "\t\t" + executionProcess.getLowerLimit());
 
         // Show ready processes
         for (ProcessControlBlock process : readyProcesses) {
-            System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority() +
-            "\t\t" + process.getUpperLimit() + "\t\t" + process.getLowerLimit());
+            System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority()
+                    + "\t\t" + process.getUpperLimit() + "\t\t" + process.getLowerLimit());
         }
 
         // Show blocked processes
         for (var semaphore : semaphores) {
             for (var process : semaphore.getBlockedProcesses()) {
-                System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority() +
-                		"\t\t" + process.getUpperLimit() + "\t\t" + process.getLowerLimit());
+                System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority()
+                        + "\t\t" + process.getUpperLimit() + "\t\t" + process.getLowerLimit());
             }
         }
         System.out.println();

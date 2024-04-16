@@ -334,7 +334,7 @@ public class Simulator extends Observable {
 
             while (statement != null) {
                 pc = RegisterFile.getProgramCounter(); // added: 7/26/06 (explanation above)
-                
+
                 // Verify if address of the current statement is between the upper and lower limits of the execution process
                 try {
                     MemoryManager.verifyMemory();

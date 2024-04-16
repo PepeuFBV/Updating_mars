@@ -1,7 +1,5 @@
 package mars.mips.SO.ProcessManager;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import mars.mips.hardware.RegisterFile;
 import mars.mips.hardware.AddressErrorException;
 import mars.simulator.Simulator;
@@ -10,12 +8,7 @@ public abstract class MemoryManager {
 
     public static final int VIRTUAL_PAGE_SIZE = 4;
     public static final int MAX_NUM_BLOCKS = 16;
-
-    private static final ArrayList<Integer> symbolTable = new ArrayList<>() {
-        {
-            add(4194304);    // Initializes with the main process label
-        }
-    };
+    public static int PROGRAM_END_ADDRESS;     // It is defined in assembly time
 
     public static SchedulerEPag schedulerEPag = SchedulerEPag.FIFO;
 
@@ -34,21 +27,30 @@ public abstract class MemoryManager {
         MemoryManager.schedulerEPag = SchedulingAlgorithm;
     }
 
-    public static void addSymbol(int processAddress) {
-//        System.out.println("Process Address: " + processAddress);
-//        symbolTable.add(processAddress);
-//        if (symbolTable.size() >= 2) {
-//            Collections.sort(symbolTable, (o1, o2) -> o1 - o2);
-//        }
-    }
-    
-    public static int getLast() {
-        return symbolTable.getLast();
-    }
-    
-    public static void verifyBounds(int processAddress) {
+    public static void verifyBounds(ProcessControlBlock process) {
         // TODO: verify the bounds of the new fork process and changes the upper and lower limits of the other processes
-        
+        int upper = process.getUpperLimit();
+        int lower = process.getLowerLimit();
+
+        // Temporarily adds the execution process to the queue of ready processes
+        var readyProcs = ProcessTable.getReadyProcesses();
+        readyProcs.addFirst(ProcessTable.getExecutionProcess());
+
+        // Defines the memory limits of each process created so far
+        for (int i = 0; i < readyProcs.size(); i++) {
+            for (var p : readyProcs) {
+                int upperP = p.getUpperLimit();
+                int lowerP = p.getLowerLimit();
+
+                if (upper >= upperP && upper <= lowerP) {
+                    p.setLowerLimit(upper - 4);
+                } else if (lower >= upperP && lower <= lowerP) {
+                    process.setLowerLimit(upperP - 4);
+                }
+            }
+        }
+
+        readyProcs.removeFirst();
     }
 
     public static void verifyMemory() throws AddressErrorException {

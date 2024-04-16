@@ -36,16 +36,12 @@ public class SyscallFork extends AbstractSyscall {
         ProcessControlBlock fork = new ProcessControlBlock(ProcessTable.getPID(), processAddress,
                 ProcessControlBlock.ProcessState.READY);
 
-        // Defines the upper limit
+        // Defines the upper and lower limits
         fork.setUpperLimit(processAddress);
+        fork.setLowerLimit(MemoryManager.PROGRAM_END_ADDRESS);
 
-        MemoryManager.addSymbol(processAddress);
-        MemoryManager.verifyBounds(processAddress);
-
-        // Changes the lower limit of the previous process
-        if (!ProcessTable.getReadyProcesses().isEmpty()) {
-            ProcessTable.getReadyProcesses().getLast().setLowerLimit(processAddress - 4);
-        }
+        // Verify whether process address limits conflict and corrects them
+        MemoryManager.verifyBounds(fork);
 
         // If SyscallFork(address, priority) has been called
         if (RegisterFile.getValue(6) == 1) {
