@@ -8,7 +8,7 @@ public abstract class MemoryManager {
 
     public static final int VIRTUAL_PAGE_SIZE = 4;
     public static final int MAX_NUM_BLOCKS = 16;
-    public static int PROGRAM_END_ADDRESS;     // It is defined in assembly time
+    public static int PROGRAM_END_ADDRESS; // It is defined in assembly time
 
     public static SchedulerEPag schedulerEPag = SchedulerEPag.FIFO;
 
@@ -28,9 +28,6 @@ public abstract class MemoryManager {
     }
 
     public static void verifyBounds(ProcessControlBlock process) {
-        int upper = process.getUpperLimit();
-        int lower = process.getLowerLimit();
-
         // Temporarily adds the execution process to the queue of ready processes
         var readyProcs = ProcessTable.getReadyProcesses();
         readyProcs.addFirst(ProcessTable.getExecutionProcess());
@@ -40,20 +37,26 @@ public abstract class MemoryManager {
         do {
             conflict = false;
             for (var p : readyProcs) {
+                int upper = process.getUpperLimit();
+                int lower = process.getLowerLimit();
                 int upperP = p.getUpperLimit();
                 int lowerP = p.getLowerLimit();
 
                 if (upper >= upperP && upper <= lowerP) {
                     p.setLowerLimit(upper - 4);
-                    System.out.println("Conflict Sup detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit() + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: " + upper);
+                    System.out.println("Conflict Sup detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit()
+                            + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: "
+                            + upper);
                     conflict = true;
                 } else if (lower >= upperP && lower <= lowerP) {
                     process.setLowerLimit(upperP - 4);
-                    System.out.println("Conflict Inf detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit() + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: " + upper);
+                    System.out.println("Conflict Inf detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit()
+                            + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: "
+                            + upper);
                     conflict = true;
-                } 
-                
-                
+                } else if (upperP >= upper && lowerP <= lower) {
+                    process.setLowerLimit(upperP - 4);
+                }
             }
 
         } while (conflict);
@@ -70,7 +73,8 @@ public abstract class MemoryManager {
         int pc = RegisterFile.getProgramCounter();
         if (pc < procExec.getUpperLimit() || pc > procExec.getLowerLimit()) {
             String errorMessage = "\nThe address limits of the running process, "
-                    + "which has an upper limit: " + procExec.getUpperLimit() + " \nand lower limit: " + procExec.getLowerLimit() + " are outside the access area."
+                    + "which has an upper limit: " + procExec.getUpperLimit() + " \nand lower limit: "
+                    + procExec.getLowerLimit() + " are outside the access area."
                     + "\nAccess attempt address: " + pc + " ";
             throw new AddressErrorException(errorMessage, Simulator.EXCEPTION, pc);
         }
@@ -125,10 +129,10 @@ public abstract class MemoryManager {
             // Se houver um bloco livre, adicione as novas instruções a ele
             // blocos[freeBlock2] = new Block();
             // for (int i = 0; i < blocos.length; i++) {
-            //     if (blocos[i] == null) {
-            //         blocos[i] = new Block();
-            //         break;
-            //     }
+            // if (blocos[i] == null) {
+            // blocos[i] = new Block();
+            // break;
+            // }
             // }
         }
     }

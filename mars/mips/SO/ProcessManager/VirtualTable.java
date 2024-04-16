@@ -83,7 +83,7 @@ public class VirtualTable {
             for (Block block : blocks) {
                 if (block.cont < MemoryManager.VIRTUAL_PAGE_SIZE) {
                     block.addInstruction(addressInstructions);
-
+                    
                     return true;
                 }
             }
