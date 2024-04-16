@@ -42,9 +42,9 @@ public abstract class MemoryManager {
 //        }
     }
     
-    public static int getLast() {
-        return symbolTable.getLast();
-    }
+    // public static int getLast() {
+    //     return symbolTable.getLast();
+    // }
     
     public static void verifyBounds(int processAddress) {
         // TODO: verify the bounds of the new fork process and changes the upper and lower limits of the other processes

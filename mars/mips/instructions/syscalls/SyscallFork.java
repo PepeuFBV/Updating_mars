@@ -1,5 +1,6 @@
 package mars.mips.instructions.syscalls;
 
+import mars.Globals;
 import mars.ProcessingException;
 import mars.ProgramStatement;
 import mars.mips.SO.ProcessManager.MemoryManager;
@@ -38,14 +39,16 @@ public class SyscallFork extends AbstractSyscall {
 
         // Defines the upper limit
         fork.setUpperLimit(processAddress);
+        // The temporary lower limit is the end of the program. Starting address (4194304) + (number of lines - 1) * 4
+        fork.setLowerLimit(4194304 + ((Globals.program.getMachineList().size() - 1) * 4));
 
         MemoryManager.addSymbol(processAddress);
         MemoryManager.verifyBounds(processAddress);
 
-        // Changes the lower limit of the previous process
-        if (!ProcessTable.getReadyProcesses().isEmpty()) {
-            ProcessTable.getReadyProcesses().getLast().setLowerLimit(processAddress - 4);
-        }
+        // // Changes the lower limit of the previous process
+        // if (!ProcessTable.getReadyProcesses().isEmpty()) {
+        //     ProcessTable.getReadyProcesses().getLast().setLowerLimit(processAddress - 4);
+        // }
 
         // If SyscallFork(address, priority) has been called
         if (RegisterFile.getValue(6) == 1) {
