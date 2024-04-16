@@ -8,25 +8,32 @@ public class ProcessControlBlock {
 
     // Process priority
     private int priority;
-    private int inferiorLimit;
-    
-    public int getInferiorLimit() {
-		return inferiorLimit;
-	}
+    private int upperLimit;
+    private int lowerLimit;
 
-	public void setInferiorLimit(int inferiorLimit) {
-		this.inferiorLimit = inferiorLimit;
-	}
+    public int getPriority() {
+        return priority;
+    }
 
-	public int getSuperiorLimit() {
-		return superiorLimit;
-	}
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
-	public void setSuperiorLimit(int superiorLimit) {
-		this.superiorLimit = superiorLimit;
-	}
+    public int getLowerLimit() {
+        return lowerLimit;
+    }
 
-	private int superiorLimit;
+    public void setLowerLimit(int lowerLimit) {
+        this.lowerLimit = lowerLimit;
+    }
+
+    public int getUpperLimit() {
+        return upperLimit;
+    }
+
+    public void setUpperLimit(int upperLimit) {
+        this.upperLimit = upperLimit;
+    }
 
     // Special registers storage
     public static final int GLOBAL_POINTER_REGISTER = 28;
@@ -71,14 +78,14 @@ public class ProcessControlBlock {
             System.err.println("Error: ProcessControlBlock creation failed.");
         }
     }
-    
+
     public ProcessControlBlock(int pid, int programAddress, ProcessState state, int priority, int superiorLimit) {
         try {
             this.pid = pid;
             setProgramAddress(programAddress);
             this.state = state;
             this.priority = priority;
-            this.superiorLimit = superiorLimit;
+            this.upperLimit = superiorLimit;
         } catch (RuntimeException e) {
             System.err.println("Error: ProcessControlBlock creation failed.");
         }
@@ -93,14 +100,6 @@ public class ProcessControlBlock {
         } catch (RuntimeException e) {
             System.err.println("Error: ProcessControlBlock creation failed.");
         }
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
     }
 
     /**

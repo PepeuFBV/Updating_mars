@@ -50,23 +50,23 @@ public abstract class ProcessTable {
      * Method for displaying all processes for debugging.
      */
     public static void listProcesses() {
-        System.out.println("PID\tAddress\tState\tPriority\tSuperiorLimit\tInferiorLimit");
+        System.out.println("PID\tAddress\tState\tPriority\tUpperLimit\tLowerLimit");
 
         // Show execution process
         System.out.println(executionProcess.getPid() + "\t" + executionProcess.getProgramAddress() + "\t" + executionProcess.getState() + "\t" + executionProcess.getPriority() + 
-        		"\t\t" + executionProcess.getSuperiorLimit() + "\t\t" + executionProcess.getInferiorLimit());
+        		"\t\t" + executionProcess.getUpperLimit() + "\t\t" + executionProcess.getLowerLimit());
 
         // Show ready processes
         for (ProcessControlBlock process : readyProcesses) {
             System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority() +
-            "\t\t" + process.getSuperiorLimit() + "\t\t" + process.getInferiorLimit());
+            "\t\t" + process.getUpperLimit() + "\t\t" + process.getLowerLimit());
         }
 
         // Show blocked processes
         for (var semaphore : semaphores) {
             for (var process : semaphore.getBlockedProcesses()) {
                 System.out.println(process.getPid() + "\t" + process.getProgramAddress() + "\t" + process.getState() + "\t" + process.getPriority() +
-                		"\t\t" + process.getSuperiorLimit() + "\t\t" + process.getInferiorLimit());
+                		"\t\t" + process.getUpperLimit() + "\t\t" + process.getLowerLimit());
             }
         }
         System.out.println();

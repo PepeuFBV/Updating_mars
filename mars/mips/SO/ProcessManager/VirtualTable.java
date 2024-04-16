@@ -7,13 +7,13 @@ public class VirtualTable {
 
     public class Block {
 
-        public int[] instructions = new int[MemoryManager.tamPagVirtual];
+        public int[] instructions = new int[MemoryManager.VIRTUAL_PAGE_SIZE];
 
         public Block(int[] instructions) {
             System.arraycopy(instructions, 0, this.instructions, 0, instructions.length);
         }
     }
 
-    public static final Map<ProcessControlBlock, Block[]> pagesTable = new LinkedHashMap<>();
+    public static final Map<ProcessControlBlock, Block[]> pageTable = new LinkedHashMap<>();
     
 }

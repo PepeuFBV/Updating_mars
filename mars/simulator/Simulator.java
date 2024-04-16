@@ -7,6 +7,7 @@ import mars.mips.hardware.*;
 import mars.mips.instructions.*;
 import java.util.*;
 import javax.swing.*;
+import mars.mips.SO.ProcessManager.MemoryManager;
 import mars.tools.TimerTool;
 import mars.mips.SO.ProcessManager.ProcessTable;
 
@@ -333,6 +334,21 @@ public class Simulator extends Observable {
 
             while (statement != null) {
                 pc = RegisterFile.getProgramCounter(); // added: 7/26/06 (explanation above)
+                
+                // Verify if address of the current statement is between the upper and lower limits of the execution process
+                try {
+                    MemoryManager.verifyMemory();
+                } catch (AddressErrorException aee) {
+                    ErrorList el = new ErrorList();
+                    el.add(new ErrorMessage((MIPSprogram) null, 0, 0, aee.getMessage()));
+                    this.pe = new ProcessingException(el, aee);
+                    Coprocessor0.updateRegister(Coprocessor0.EPC, RegisterFile.getProgramCounter());
+                    this.constructReturnReason = EXCEPTION;
+                    this.done = true;
+                    SystemIO.resetFiles(); // close any files opened in MIPS program
+                    Simulator.getInstance().notifyObserversOfExecutionStop(maxSteps, pc);
+                    return done;
+                }
 
                 // Verify TimerTool is scheduling and ready processes queue isn't empty.
                 boolean executeInstruction = TimerTool.isScheduling() && !ProcessTable.getReadyProcesses().isEmpty();

@@ -7,6 +7,8 @@
    import java.awt.*;
    import java.awt.event.*;
    import javax.swing.*;
+import mars.mips.SO.ProcessManager.MemoryManager;
+import mars.mips.SO.ProcessManager.ProcessTable;
  
  /*
 Copyright (c) 2003-2010,  Pete Sanderson and Kenneth Vollmar
@@ -155,6 +157,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                   FileStatus.set(FileStatus.NOT_EDITED);
                }
          }               
+         
+         // Defines the lower limit of the main process as the end address of the program
+         Object obj = Globals.program.getMachineList().getLast();
+         ProgramStatement ps = (ProgramStatement) obj;
+         ProcessTable.getExecutionProcess().setLowerLimit(ps.getAddress());
       }
       
    	// Handy little utility for building comma-separated list of filenames

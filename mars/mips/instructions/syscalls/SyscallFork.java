@@ -1,13 +1,8 @@
 package mars.mips.instructions.syscalls;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.lang.reflect.Array;
-import mars.Globals;
 import mars.ProcessingException;
 import mars.ProgramStatement;
-import mars.assembler.SymbolTable;
+import mars.mips.SO.ProcessManager.MemoryManager;
 import mars.mips.SO.ProcessManager.ProcessControlBlock;
 import mars.mips.SO.ProcessManager.ProcessTable;
 import mars.mips.hardware.RegisterFile;
@@ -18,16 +13,17 @@ import mars.mips.hardware.RegisterFile;
 public class SyscallFork extends AbstractSyscall {
 
     /**
-     * Build a instance of the Syscall Fork. Default service number is 18, and name
-     * is "Fork".
+     * Build a instance of the Syscall Fork. Default service number is 18, and
+     * name is "Fork".
      */
     public SyscallFork() {
         super(18, "Fork");
     }
 
     /**
-     * Performs syscall function to create a process with initial address in $a0.
-     * 
+     * Performs syscall function to create a process with initial address in
+     * $a0.
+     *
      * @param statement
      * @throws ProcessingException
      */
@@ -39,10 +35,16 @@ public class SyscallFork extends AbstractSyscall {
         // Instantiate a new PCB for the process
         ProcessControlBlock fork = new ProcessControlBlock(ProcessTable.getPID(), processAddress,
                 ProcessControlBlock.ProcessState.READY);
-        fork.setSuperiorLimit(processAddress);
 
+        // Defines the upper limit
+        fork.setUpperLimit(processAddress);
+
+        MemoryManager.addSymbol(processAddress);
+        MemoryManager.verifyBounds(processAddress);
+
+        // Changes the lower limit of the previous process
         if (!ProcessTable.getReadyProcesses().isEmpty()) {
-            ProcessTable.getReadyProcesses().getLast().setInferiorLimit(processAddress - 4);
+            ProcessTable.getReadyProcesses().getLast().setLowerLimit(processAddress - 4);
         }
 
         // If SyscallFork(address, priority) has been called
@@ -61,16 +63,6 @@ public class SyscallFork extends AbstractSyscall {
 
         // Add the new process in the process table
         ProcessTable.getReadyProcesses().addLast(fork);
-
-        Map<String, Integer> jumps = new LinkedHashMap<>();
-        List<ProgramStatement> machineList = Globals.program.getMachineList();
-        SymbolTable table = Globals.program.getLocalSymbolTable();
-        for (ProgramStatement e : machineList) {
-            if (e.getInstruction().getName().equals("j")){
-                System.out.println("Instrução: " + e.getSource().split(" ")[1] + " - " + table.getAddress(e.getSource().split(" ")[1]));
-                jumps.put(e.getSource().split(" ")[1], table.getAddress(e.getSource().split(" ")[1]));
-            }
-        }
 
         // For debug purposes
         System.out.println("Syscall Fork");
