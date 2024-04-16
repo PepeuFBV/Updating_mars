@@ -28,7 +28,6 @@ public abstract class MemoryManager {
     }
 
     public static void verifyBounds(ProcessControlBlock process) {
-        // TODO: verify the bounds of the new fork process and changes the upper and lower limits of the other processes
         int upper = process.getUpperLimit();
         int lower = process.getLowerLimit();
 

@@ -1,5 +1,6 @@
 package mars.mips.instructions.syscalls;
 
+import mars.Globals;
 import mars.ProcessingException;
 import mars.ProgramStatement;
 import mars.mips.SO.ProcessManager.MemoryManager;
@@ -42,7 +43,7 @@ public class SyscallFork extends AbstractSyscall {
 
         // Verify whether process address limits conflict and corrects them
         MemoryManager.verifyBounds(fork);
-
+        
         // If SyscallFork(address, priority) has been called
         if (RegisterFile.getValue(6) == 1) {
             // Gets the priority value in $a1

@@ -1,3 +1,4 @@
+
 package mars.venus;
 
 import mars.*;
@@ -41,6 +42,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /**
  * Action class for the Run -> Assemble menu item (and toolbar icon)
  */
+
 public class RunAssembleAction extends GuiAction {
 
     private static ArrayList MIPSprogramsToAssemble;
