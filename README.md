@@ -30,10 +30,7 @@ To run the tests, you need to open the Mars MIPS Simulator and load the project 
 The project was developed under the Operating Systems course at the Federal University of the Semi-Arid Rural Area (UFERSA). The project was developed by the following students:
 - Afonso Simão
 - Breno Klywer
-- João Emanoel
 - Pedro Figueira
-- Samuel Rogenes
-- Vinícius Gabriel
 
 
 ## Implementation Steps
@@ -47,10 +44,11 @@ The project was divided into the following parts:
     - Step 3.2: New Scheduling Algorithms
     - Step 4: Process Synchronization through Semaphores
 - Part 2
-    - Step 1: Virtual Memory Management
-    - Step 2: Page Table Implementation
+    - Step 1: Virtual Memory Management Structures
+    - Step 2: MMU and Page Table Implementation
 
 ---
+### Part 1
 
 ### Step 1: PCB Creation, Process Table and Process Scheduling
 
@@ -223,3 +221,165 @@ Programa2:
 
 ---
 ### Step 4: Process Synchronization through Semaphores
+
+For synchronization of the processes, we implemented 4 extra syscalls for the semaphores: `CreateSemaphore`, `TerminateSemaphore`, `DownSemaphore` and `UpSemaphore`.
+
+- `CreateSemaphore`: Creates a list in which the processes that are waiting for the semaphore are stored as blocked. The syscall receives an integer as a parameter, which is the semaphore address, used as the initial address of the semaphore.
+- `TerminateSemaphore`: Terminates the semaphore, removing the semaphore from the list of semaphores. Through the syscall, the semaphore address is passed as a parameter, and the list associated with the semaphore is removed.
+- `DownSemaphore`: Decreases the semaphore value. If after the syscall the semaphore value is less than 0 or equal to 0, the process is blocked. The syscall receives the semaphore address as a parameter.
+- `UpSemaphore`: Increases the semaphore value. If there is a process blocked in the semaphore list, the process is unblocked. The syscall receives the semaphore address as a parameter.
+
+Extra - For testing purposes we created the producer-consumer problem using semaphores. The following assembly code was used:
+
+_macros.asm_
+```assembly
+.macro PrintInt
+	li $v0,1
+	syscall
+.end_macro
+
+.macro PrintString
+	li $v0,4
+	syscall
+.end_macro
+
+.macro ReadInt
+	li $v0,5
+	syscall
+.end_macro
+
+.macro ReadString
+	li $v0,8
+	syscall
+.end_macro
+
+.macro Done
+	li $v0,10
+	syscall
+.end_macro
+
+.macro PrintChar
+	li $v0,11
+	syscall
+.end_macro
+
+.macro ReadChar
+	li $v0,12
+	syscall
+.end_macro
+
+.macro Return (%termination_value)
+	li $a0, %termination_value
+	bltz $a0, exit
+	Done 
+	exit: Exit2($a0)
+.end_macro
+
+.macro Exit2(%exit_value)
+	move $a0, %exit_value
+	PrintInt
+	li $v0,10
+	syscall
+.end_macro
+
+.macro LoadVar(%label, %reg)
+	lw %reg, %label
+.end_macro
+
+.macro StoreVar(%label, %reg)
+	sw %reg, %label
+.end_macro
+
+.macro SyscallFork(%label)
+	la $a0, %label
+	li $a2, 0		# differentiates the SyscallFork macros to a unique Java class
+	li $v0, 18
+	syscall
+.end_macro
+
+.macro SyscallFork(%label, %priority)
+	la $a0, %label
+	la $a1, %priority
+	li $a2, 1		# if $a2 value is 1, theres a process with priority
+	li $v0, 18
+	syscall
+.end_macro
+.macro SyscallProcessChange
+	li $v0, 19
+	syscall
+.end_macro
+.macro SyscallProcessTerminate
+	li $v0, 20
+	syscall
+.end_macro
+
+.macro SyscallCreateSemaphore(%init)
+	la $a0, %init
+	lw $a1, %init
+	li $v0, 21
+	syscall
+.end_macro
+```
+---
+_semaphore.asm_
+```assembly
+.include "macros.asm"
+
+.data
+	mutex: .word 1
+	empty: .word 0
+	full: .word 10
+	buffer: .word 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+
+.text
+main:
+	# Cria os semáforos
+	SyscallCreateSemaphore(mutex)
+	SyscallCreateSemaphore(empty)
+	SyscallCreateSemaphore(full)
+
+	SyscallFork(produtor)		# Cria o processo produtor
+	SyscallFork(consumidor)		# Cria o processo consumidor
+
+	SyscallProcessTerminate		# Termina o processo principal
+
+produtor:
+	la $t0, buffer      # Carrega o endereco do buffer
+	loop1:
+		SyscallDownSemaphore(empty)    # Verifica se pode produzir
+		SyscallDownSemaphore(mutex)    # Entra na região crítica (se mutex > 0)
+
+		addi $s0, $s0, 1    # Produz um item (produz valores de 1 a 10)
+		lw $t1, full		# Carrega o valor de full
+		mul $t1, $t1, 4		# Multiplica full por 4 bytes = quantidade de inteiros no buffer
+		add $t2, $t1, $t0	# Salva o deslocamento do endereço do buffer em $t2 (topo)
+		sw $s0, 0($t2)      # Armazena o valor do registrador $s0 no topo do buffer
+
+		SyscallUpSemaphore(mutex)    # Libera acesso ao buffer
+		SyscallUpSemaphore(full)     # Incrementa o contador de itens no buffer
+		j loop1
+	fim1:	SyscallProcessTerminate
+
+consumidor:
+	la $t0, buffer      # Carrega o endereco do buffer
+	loop2:
+		SyscallDownSemaphore(full)    # Verifica se pode consumir
+		SyscallDownSemaphore(mutex)    # Entra na região crítica (se mutex > 0)
+
+		lw $t1, full		# Carrega o valor de full
+		mul $t1, $t1, 4		# Multiplica full por 4 bytes = quantidade de inteiros no buffer
+		add $t2, $t1, $t0	# Salva o deslocamento do endereço do buffer em $t2 (topo)
+		sw $0, 0($t2)       # Consome um item do buffer salvando o valor 0
+
+		SyscallUpSemaphore(mutex)    # Libera acesso ao buffer
+		SyscallUpSemaphore(empty)    # Incrementa o contador de espaços vazios no buffer
+		j loop2	
+	fim2:	SyscallProcessTerminate
+```
+
+---
+### Part 2
+
+### Step 1: Virtual Memory Management Structures
+
+For the virtual memory management structures, we implemented registers for the upper and lower limits of the process memory in the PCB. The registers are used to store the memory limits of the process and every time the process is changed, the memory limits are updated. The memory limits are used to check if the process is trying to access a memory address that is out of its memory limits. A memory manager class was created to manage the memory limits and check if the process is trying to access a memory address that is out of its memory limits.
