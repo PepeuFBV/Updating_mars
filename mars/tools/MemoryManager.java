@@ -24,7 +24,7 @@ public class MemoryManager extends AbstractMarsToolAndApplication {
     private JTable table;
     
     public MemoryManager() {
-        super("Memory Manager", "Memory Manager");
+        super("Memory Management Unit", "Memory Manager");
     }
     
     public void initComponents() {

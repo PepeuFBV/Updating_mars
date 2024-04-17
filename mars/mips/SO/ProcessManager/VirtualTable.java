@@ -17,7 +17,7 @@ public class VirtualTable {
         private boolean referencedPage;
         private boolean modifiedPage;
         private enum protectionBits {
-            READ, WRITE, EXECUTE
+            R, W, X, RW, RX, WX, RWX
         }
         private protectionBits protection;
         private boolean present;
