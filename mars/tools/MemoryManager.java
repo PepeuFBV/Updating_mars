@@ -54,13 +54,17 @@ public class MemoryManager extends AbstractMarsToolAndApplication {
 
         paginMethodLabel.setText("Paging Method");
 
-        numPagesCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        numPagesCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "1", "2", "4", "8", "16" }));
+        numPagesCheckbox.setSelectedIndex(4);
 
-        instPageCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        instPageCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4" }));
+        instPageCheckbox.setSelectedIndex(3);
 
         memSizeCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        
 
-        pagingMethodCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        pagingMethodCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "NRU", "FIFO", "Segunda chance", "LRU" }));
+        pagingMethodCheckbox.setSelectedIndex(2);
 
         table.setModel(new DefaultTableModel(
             new Object [][] {
