@@ -6,9 +6,9 @@ import mars.simulator.Simulator;
 
 public abstract class MemoryManager {
 
-    public static final int VIRTUAL_PAGE_SIZE = 4;
-    public static final int MAX_NUM_BLOCKS = 16;
     public static int PROGRAM_END_ADDRESS; // It is defined in assembly time
+    public static int pageSize = 4;
+    public static int maxNumPages = 16;
 
     public static SchedulerEPag schedulerEPag = SchedulerEPag.FIFO;
 
@@ -21,6 +21,14 @@ public abstract class MemoryManager {
         WORKING_SET,
         OPTIMAL,
         NOT_USED_RECENTLY
+    }
+
+    public static void setPageSize(int pageSize) {
+        MemoryManager.pageSize = pageSize;
+    }
+
+    public static void setMaxNumPages(int maxNumPages) {
+        MemoryManager.maxNumPages = maxNumPages;
     }
 
     public static void setSchedulingAlgorithm(SchedulerEPag SchedulingAlgorithm) {
@@ -129,10 +137,10 @@ public abstract class MemoryManager {
             // Se houver um bloco livre, adicione as novas instruções a ele
             // entries[freeEntry2] = new VirtualTableEntry();
             // for (int i = 0; i < entries.length; i++) {
-                // if (entries[i] == null) {
-                    // entries[i] = new VirtualTableEntry();
-                    // break;
-                // }
+            // if (entries[i] == null) {
+            // entries[i] = new VirtualTableEntry();
+            // break;
+            // }
             // }
         }
     }

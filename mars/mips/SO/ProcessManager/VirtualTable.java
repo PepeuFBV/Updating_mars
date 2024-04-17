@@ -28,7 +28,7 @@ public class VirtualTable {
         }
 
         public VirtualTableEntry() {
-            instructions = new int[MemoryManager.VIRTUAL_PAGE_SIZE];
+            instructions = new int[MemoryManager.pageSize];
             cont = 0;
         }
 
@@ -36,13 +36,13 @@ public class VirtualTable {
             if (instructions.length > 4) {
                 return;
             }
-            instructions = new int[MemoryManager.VIRTUAL_PAGE_SIZE];
+            instructions = new int[MemoryManager.pageSize];
             System.arraycopy(instructions, 0, this.instructions, 0, instructions.length);
             cont = instructions.length;
         }
 
         public void addInstruction(int address) {
-            if (cont < MemoryManager.VIRTUAL_PAGE_SIZE) {
+            if (cont < MemoryManager.pageSize) {
                 instructions[cont] = address;
                 cont++;
             }
@@ -98,7 +98,7 @@ public class VirtualTable {
             return true;
         } else {
             for (VirtualTableEntry entry : entries) {
-                if (entry.cont < MemoryManager.VIRTUAL_PAGE_SIZE) {
+                if (entry.cont < MemoryManager.pageSize) {
                     entry.addInstruction(addressInstructions);
                     
                     return true;

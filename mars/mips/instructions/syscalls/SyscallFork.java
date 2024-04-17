@@ -1,11 +1,11 @@
 package mars.mips.instructions.syscalls;
 
-import mars.Globals;
 import mars.ProcessingException;
 import mars.ProgramStatement;
 import mars.mips.SO.ProcessManager.MemoryManager;
 import mars.mips.SO.ProcessManager.ProcessControlBlock;
 import mars.mips.SO.ProcessManager.ProcessTable;
+import mars.mips.SO.ProcessManager.VirtualTable;
 import mars.mips.hardware.RegisterFile;
 
 /**
@@ -51,7 +51,10 @@ public class SyscallFork extends AbstractSyscall {
 
             fork.setPriority(priority);
         }
-
+        
+        var pageTable = new VirtualTable.VirtualTableEntry[MemoryManager.pageSize];
+        VirtualTable.pageTable.put(fork, pageTable);
+        
         // Save the actual context, same as execution process
         fork.copyFromHardware();
 
