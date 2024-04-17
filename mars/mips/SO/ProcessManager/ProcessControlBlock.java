@@ -10,6 +10,9 @@ public class ProcessControlBlock {
     private int priority;
     private int upperLimit;
     private int lowerLimit;
+    private int hits;
+    private int misses;
+    private int pageFaults;
 
     public int getPriority() {
         return priority;
@@ -74,6 +77,9 @@ public class ProcessControlBlock {
             setProgramAddress(programAddress);
             this.state = state;
             this.priority = priority;
+            this.hits = 0;
+            this.misses = 0;
+            this.pageFaults = 0;
         } catch (RuntimeException e) {
             System.err.println("Error: ProcessControlBlock creation failed.");
         }
@@ -86,6 +92,9 @@ public class ProcessControlBlock {
             this.state = state;
             this.priority = priority;
             this.upperLimit = superiorLimit;
+            this.hits = 0;
+            this.misses = 0;
+            this.pageFaults = 0;
         } catch (RuntimeException e) {
             System.err.println("Error: ProcessControlBlock creation failed.");
         }
@@ -97,6 +106,9 @@ public class ProcessControlBlock {
             setProgramAddress(programAddress);
             this.state = state;
             this.priority = 1;
+            this.hits = 0;
+            this.misses = 0;
+            this.pageFaults = 0;
         } catch (RuntimeException e) {
             System.err.println("Error: ProcessControlBlock creation failed.");
         }
@@ -215,6 +227,56 @@ public class ProcessControlBlock {
         RegisterFile.setProgramCounter(programCounter.getValue());
         RegisterFile.updateRegister(33, hi.getValue());
         RegisterFile.updateRegister(34, lo.getValue());
+    }
+
+
+    /**
+     * @return int return the hits
+     */
+    public int getHits() {
+        return hits;
+    }
+
+    /**
+     * @param hits the hits to set
+     */
+    public void setHits(int hits) {
+        this.hits = hits;
+    }
+
+    /**
+     * @return int return the misses
+     */
+    public int getMisses() {
+        return misses;
+    }
+
+    /**
+     * @param misses the misses to set
+     */
+    public void setMisses(int misses) {
+        this.misses = misses;
+    }
+
+    /**
+     * @return int return the pageFaults
+     */
+    public int getPageFaults() {
+        return pageFaults;
+    }
+
+    /**
+     * @param pageFaults the pageFaults to set
+     */
+    public void setPageFaults(int pageFaults) {
+        this.pageFaults = pageFaults;
+    }
+
+    /**
+     * @param pid the pid to set
+     */
+    public void setPid(int pid) {
+        this.pid = pid;
     }
 
 }
