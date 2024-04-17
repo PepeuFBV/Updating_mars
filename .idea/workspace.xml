@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="399e5b47-ebc7-4c08-b38a-30c1e19c6bd0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/MemoryManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/MemoryManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/VirtualTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/VirtualTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mars/tools/MemoryManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/tools/MemoryManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,7 +109,7 @@
       <workItem from="1708346004944" duration="1348000" />
       <workItem from="1710417021607" duration="10193000" />
       <workItem from="1710464903341" duration="13000" />
-      <workItem from="1713374022798" duration="352000" />
+      <workItem from="1713374022798" duration="1030000" />
     </task>
     <servers />
   </component>

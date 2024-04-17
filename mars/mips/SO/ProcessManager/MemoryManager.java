@@ -98,41 +98,41 @@ public abstract class MemoryManager {
         }
 
         // Obtém a lista de blocos associada ao processo em execução
-        VirtualTable.Block[] blocos = VirtualTable.pageTable.get(procExec);
-        int freeBlock2 = 0;
+        VirtualTable.VirtualTableEntry[] entries = VirtualTable.pageTable.get(procExec);
+        int freeEntry2 = 0;
 
         // Verifica se há um bloco livre para carregar novas instruções
-        boolean freeblock1 = false;
+        boolean freeEntry1 = false;
 
-        for (int i = 0; i < blocos.length; i++) {
-            if (blocos[i] == null) {
-                freeblock1 = true;
-                freeBlock2 = i;
+        for (int i = 0; i < entries.length; i++) {
+            if (entries[i] == null) {
+                freeEntry1 = true;
+                freeEntry2 = i;
                 break;
             }
         }
 
         // Se não houver bloco livre, remova o bloco mais antigo (primeiro na fila)
-        if (!freeblock1) {
+        if (!freeEntry1) {
             // Remove o primeiro bloco na fila (FIFO)
-            VirtualTable.Block blocoRemovido = blocos[0];
+            VirtualTable.VirtualTableEntry removedEntry = entries[0];
 
             // Desloca todos os blocos restantes uma posição para a esquerda
-            for (int i = 0; i < blocos.length - 1; i++) {
-                blocos[i] = blocos[i + 1];
+            for (int i = 0; i < entries.length - 1; i++) {
+                entries[i] = entries[i + 1];
             }
 
-            // Adiciona o novo bloco no final da lista (última posição)
+            // Adiciona o novo entry no final da lista (última posição)
             // blocos[blocos.length - 1] = new Block();
             // carregar as novas instruções para o bloco recém-adicionado
         } else {
             // Se houver um bloco livre, adicione as novas instruções a ele
-            // blocos[freeBlock2] = new Block();
-            // for (int i = 0; i < blocos.length; i++) {
-            // if (blocos[i] == null) {
-            // blocos[i] = new Block();
-            // break;
-            // }
+            // entries[freeEntry2] = new VirtualTableEntry();
+            // for (int i = 0; i < entries.length; i++) {
+                // if (entries[i] == null) {
+                    // entries[i] = new VirtualTableEntry();
+                    // break;
+                // }
             // }
         }
     }

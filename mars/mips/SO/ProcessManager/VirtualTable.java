@@ -9,7 +9,7 @@ public class VirtualTable {
      * Represents a block of instructions in the virtual memory.
      * Also known as a virtual table entry.
      */
-    public class Block {
+    public class VirtualTableEntry {
 
         private int[] instructions;
         private int cont;
@@ -27,12 +27,12 @@ public class VirtualTable {
             return instructions;
         }
 
-        public Block() {
+        public VirtualTableEntry() {
             instructions = new int[MemoryManager.VIRTUAL_PAGE_SIZE];
             cont = 0;
         }
 
-        public Block(int[] instructions) {
+        public VirtualTableEntry(int[] instructions) {
             if (instructions.length > 4) {
                 return;
             }
@@ -49,7 +49,7 @@ public class VirtualTable {
         }
     }
 
-    public static final Map<ProcessControlBlock, Block[]> pageTable = new LinkedHashMap<>();
+    public static final Map<ProcessControlBlock, VirtualTableEntry[]> pageTable = new LinkedHashMap<>();
 
     public boolean addPage(int[] addressInstructions) {
         ProcessControlBlock process = ProcessTable.getExecutionProcess();
@@ -59,28 +59,28 @@ public class VirtualTable {
             return false; // If not, cannot add the page
         }
 
-        Block[] blocks = pageTable.get(process);
+        VirtualTableEntry[] tableEntries = pageTable.get(process);
 
         // If the process doesn't have any associated blocks yet, create a new block
         // array
-        if (blocks == null) {
-            blocks = new Block[1];
-            blocks[0] = new Block(addressInstructions);
-            pageTable.put(process, blocks);
+        if (tableEntries == null) {
+            tableEntries = new VirtualTableEntry[1];
+            tableEntries[0] = new VirtualTableEntry(addressInstructions);
+            pageTable.put(process, tableEntries);
             return true;
         }
 
         // If the process already has associated blocks and there are already 16 blocks,
         // return false
-        if (blocks.length >= 16) {
+        if (tableEntries.length >= 16) {
             return false;
         }
 
         // If the process already has associated blocks and there are less than 16
         // blocks, add the new block
-        Block[] newBlocks = new Block[blocks.length + 1];
-        System.arraycopy(blocks, 0, newBlocks, 0, blocks.length);
-        newBlocks[blocks.length] = new Block(addressInstructions);
+        VirtualTableEntry[] newBlocks = new VirtualTableEntry[tableEntries.length + 1];
+        System.arraycopy(tableEntries, 0, newBlocks, 0, tableEntries.length);
+        newBlocks[tableEntries.length] = new VirtualTableEntry(addressInstructions);
         pageTable.put(process, newBlocks);
         return true;
     }
@@ -88,29 +88,29 @@ public class VirtualTable {
     public boolean addInstruction(int addressInstructions) {
         ProcessControlBlock process = ProcessTable.getExecutionProcess();
 
-        Block[] blocks = pageTable.get(process);
+        VirtualTableEntry[] entries = pageTable.get(process);
 
-        if (blocks == null) {
-            blocks = new Block[1];
-            blocks[0].addInstruction(addressInstructions);
-            pageTable.put(process, blocks);
+        if (entries == null) {
+            entries = new VirtualTableEntry[1];
+            entries[0].addInstruction(addressInstructions);
+            pageTable.put(process, entries);
 
             return true;
         } else {
-            for (Block block : blocks) {
-                if (block.cont < MemoryManager.VIRTUAL_PAGE_SIZE) {
-                    block.addInstruction(addressInstructions);
+            for (VirtualTableEntry entry : entries) {
+                if (entry.cont < MemoryManager.VIRTUAL_PAGE_SIZE) {
+                    entry.addInstruction(addressInstructions);
                     
                     return true;
                 }
             }
 
-            if (blocks.length < 16) {
-                Block[] newBlocks = new Block[blocks.length + 1];
-                System.arraycopy(blocks, 0, newBlocks, 0, blocks.length);
-                newBlocks[blocks.length] = new Block();
-                newBlocks[blocks.length].addInstruction(addressInstructions);
-                pageTable.put(process, newBlocks);
+            if (entries.length < 16) {
+                VirtualTableEntry[] newEntries = new VirtualTableEntry[entries.length + 1];
+                System.arraycopy(entries, 0, newEntries, 0, entries.length);
+                newEntries[entries.length] = new VirtualTableEntry();
+                newEntries[entries.length].addInstruction(addressInstructions);
+                pageTable.put(process, newEntries);
     
                 return true;
             }
