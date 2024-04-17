@@ -3,6 +3,9 @@ package mars.mips.SO.ProcessManager;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import mars.mips.hardware.AddressErrorException;
+import mars.simulator.Simulator;
+
 /**
  * Memory Management Unit
  */
@@ -81,23 +84,39 @@ public abstract class MMU {
     return false;
   }
 
-  public static void verifyInstruction(int address) {
+  public static void verifyInstruction(int address) throws AddressErrorException {
     // Verify if the instruction is in the page table
     // If not, call the page fault handler
     ProcessControlBlock process = ProcessTable.getExecutionProcess();
     VirtualTableEntry[] pageTable = MMU.pageTable.get(process);
-    int pageNumber = (address / 4) % MemoryManager.pageSize;
+
+    int mascara = 0b00000011;
+
+    int pageNumber = address / (MemoryManager.pageSize * 4);
+    pageNumber = pageNumber & 3;
+    int displacement = (address / 4) % MemoryManager.pageSize;
+
     if (pageTable[pageNumber] == null) {
+
+      process.setMisses(process.getMisses() + 1);
       addInstruction(address, pageNumber);
+
     } else {
-      for (int instruction : pageTable[pageNumber].getInstructions()) {
-        if (instruction == address) {
-          process.setHits(process.getHits() + 1);
-          return;
-        } 
+
+      if (pageTable[pageNumber].getInstructions()[displacement] == address) {
+        process.setHits(process.getHits() + 1);
+        if (address < process.getUpperLimit() || address > process.getLowerLimit()) {
+          String errorMessage = "\nThe address limits of the running process, "
+              + "which has an upper limit: " + process.getUpperLimit() + " \nand lower limit: "
+              + process.getLowerLimit() + " are outside the access area."
+              + "\nAccess attempt address: " + address + " ";
+          throw new AddressErrorException(errorMessage, Simulator.EXCEPTION, address);
+        }
+        return;
       }
 
       process.setMisses(process.getMisses() + 1);
+      addInstruction(address, pageNumber);
     }
   }
 

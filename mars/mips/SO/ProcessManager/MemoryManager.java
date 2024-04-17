@@ -106,7 +106,7 @@ public abstract class MemoryManager {
         }
 
         // Obtém a lista de blocos associada ao processo em execução
-        VirtualTable.VirtualTableEntry[] entries = VirtualTable.pageTable.get(procExec);
+        VirtualTableEntry[] entries = MMU.pageTable.get(procExec);
         int freeEntry2 = 0;
 
         // Verifica se há um bloco livre para carregar novas instruções
@@ -123,7 +123,7 @@ public abstract class MemoryManager {
         // Se não houver bloco livre, remova o bloco mais antigo (primeiro na fila)
         if (!freeEntry1) {
             // Remove o primeiro bloco na fila (FIFO)
-            VirtualTable.VirtualTableEntry removedEntry = entries[0];
+            VirtualTableEntry removedEntry = entries[0];
 
             // Desloca todos os blocos restantes uma posição para a esquerda
             for (int i = 0; i < entries.length - 1; i++) {
