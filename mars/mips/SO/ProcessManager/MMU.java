@@ -50,35 +50,14 @@ public abstract class MMU {
     return true;
   }
 
-  public static boolean addInstruction(int addressInstructions, int numPage) {
+  public static boolean addInstruction(int addressInstructions, int numPage, int displacement) {
     ProcessControlBlock process = ProcessTable.getExecutionProcess();
+    VirtualTableEntry[] pageTable = MMU.pageTable.get(process);
 
-    VirtualTableEntry[] entries = pageTable.get(process);
-
-    if (entries == null) {
-      entries = new VirtualTableEntry[1];
-      entries[0].addInstruction(addressInstructions);
-      pageTable.put(process, entries);
-
-      return true;
+    if (pageTable.length < MemoryManager.maxNumPages){
+      
     } else {
-      for (VirtualTableEntry entry : entries) {
-        if (entry.getCont() < MemoryManager.pageSize) {
-          entry.addInstruction(addressInstructions);
-
-          return true;
-        }
-      }
-
-      if (entries.length < MemoryManager.maxNumPages) {
-        VirtualTableEntry[] newEntries = new VirtualTableEntry[entries.length + 1];
-        System.arraycopy(entries, 0, newEntries, 0, entries.length);
-        newEntries[entries.length] = new VirtualTableEntry();
-        newEntries[entries.length].addInstruction(addressInstructions);
-        pageTable.put(process, newEntries);
-
-        return true;
-      }
+      //  ALGORITMO DE SUBSTITUIÇÃO DE PÁGINA.
     }
 
     return false;
@@ -91,32 +70,32 @@ public abstract class MMU {
     VirtualTableEntry[] pageTable = MMU.pageTable.get(process);
 
     int mascara = 0b00000011;
-
-    int pageNumber = address / (MemoryManager.pageSize * 4);
-    pageNumber = pageNumber & 3;
+    int index = (address / (MemoryManager.pageSize * 4)) & mascara;
     int displacement = (address / 4) % MemoryManager.pageSize;
 
-    if (pageTable[pageNumber] == null) {
+    if (pageTable[index] == null) {
 
       process.setMisses(process.getMisses() + 1);
-      addInstruction(address, pageNumber);
+      addInstruction(address, index, displacement);
 
     } else {
 
-      if (pageTable[pageNumber].getInstructions()[displacement] == address) {
+      if (address < process.getUpperLimit() || address > process.getLowerLimit()) {
+        String errorMessage = "\nThe address limits of the running process, "
+            + "which has an upper limit: " + process.getUpperLimit() + " \nand lower limit: "
+            + process.getLowerLimit() + " are outside the access area."
+            + "\nAccess attempt address: " + address + " ";
+        throw new AddressErrorException(errorMessage, Simulator.EXCEPTION, address);
+      }
+
+      if (pageTable[index].getInstructions()[displacement] == address) {
         process.setHits(process.getHits() + 1);
-        if (address < process.getUpperLimit() || address > process.getLowerLimit()) {
-          String errorMessage = "\nThe address limits of the running process, "
-              + "which has an upper limit: " + process.getUpperLimit() + " \nand lower limit: "
-              + process.getLowerLimit() + " are outside the access area."
-              + "\nAccess attempt address: " + address + " ";
-          throw new AddressErrorException(errorMessage, Simulator.EXCEPTION, address);
-        }
+        pageTable[index].setReferencedPage(true);
         return;
       }
 
       process.setMisses(process.getMisses() + 1);
-      addInstruction(address, pageNumber);
+      addInstruction(address, index, displacement);
     }
   }
 
