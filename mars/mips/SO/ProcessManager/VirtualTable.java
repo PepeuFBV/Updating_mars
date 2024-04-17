@@ -5,10 +5,27 @@ import java.util.Map;
 
 public class VirtualTable {
 
+    /**
+     * Represents a block of instructions in the virtual memory.
+     * Also known as a virtual table entry.
+     */
     public class Block {
 
-        public int[] instructions;
-        public int cont;
+        private int[] instructions;
+        private int cont;
+
+        private boolean referencedPage;
+        private boolean modifiedPage;
+        private enum protectionBits {
+            READ, WRITE, EXECUTE
+        }
+        private protectionBits protection;
+        private boolean present;
+        private int frameNumber;
+
+        public int[] getInstructions() {
+            return instructions;
+        }
 
         public Block() {
             instructions = new int[MemoryManager.VIRTUAL_PAGE_SIZE];
