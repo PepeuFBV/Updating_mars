@@ -53,9 +53,10 @@ public class SyscallFork extends AbstractSyscall {
             fork.setPriority(priority);
         }
         
+        
         var pageTable = new VirtualTableEntry[MemoryManager.pageSize];
         MMU.pageTable.put(fork, pageTable);
-        
+
         // Save the actual context, same as execution process
         fork.copyFromHardware();
 

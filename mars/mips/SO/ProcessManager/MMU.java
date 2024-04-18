@@ -2,6 +2,8 @@ package mars.mips.SO.ProcessManager;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Queue;
+
 import mars.mips.hardware.AddressErrorException;
 
 /**
@@ -13,6 +15,7 @@ public abstract class MMU {
    * Also known as a virtual table entry.
    */
   public static final Map<ProcessControlBlock, VirtualTableEntry[]> pageTable = new LinkedHashMap<>();
+  public static Map<ProcessControlBlock, Queue<VirtualTableEntry>> lastPage = new LinkedHashMap<>();
 
   public static void addInstruction(int addressInstructions, int numPage, int displacement) {
     ProcessControlBlock process = ProcessTable.getExecutionProcess();
@@ -25,6 +28,7 @@ public abstract class MMU {
         newPage.setPresent(true);
         pageTable[numPage] = newPage;
         MMU.pageTable.put(process, pageTable);
+        MMU.lastPage.get(process).add(newPage);
       } else {
         pageTable[numPage].addInstruction(addressInstructions, displacement);
         MMU.pageTable.put(process, pageTable);
@@ -35,14 +39,17 @@ public abstract class MMU {
     }
   }
 
+  public static void deletProcess(ProcessControlBlock process) {
+    MMU.pageTable.remove(process);
+  }
+
   public static void verifyInstruction(int address) throws AddressErrorException {
     // Verify if the instruction is in the page table
     // If not, call the page fault handler
     ProcessControlBlock process = ProcessTable.getExecutionProcess();
     VirtualTableEntry[] pageTable = MMU.pageTable.get(process);
-
-    int mascara = 0b00000011;
-    int index = (address / (MemoryManager.pageSize * 4)) & mascara;
+    
+    int index = ((address / (MemoryManager.pageSize * 4)) % MemoryManager.maxNumPages);
     int displacement = (address / 4) % MemoryManager.pageSize;
 
     if (pageTable[index] == null) {
