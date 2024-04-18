@@ -8,7 +8,7 @@
 
 .text
 main:
-	# Cria os semáforos
+	# Cria os semaforos
 	SyscallCreateSemaphore(mutex)
 	SyscallCreateSemaphore(empty)
 	SyscallCreateSemaphore(full)
@@ -22,12 +22,12 @@ produtor:
 	la $t0, buffer      # Carrega o endereco do buffer
 	loop1:
 		SyscallDownSemaphore(empty)    # Verifica se pode produzir
-		SyscallDownSemaphore(mutex)    # Entra na região crítica (se mutex > 0)
+		SyscallDownSemaphore(mutex)    # Entra na regiao critica (se mutex > 0)
 		
 		addi $s0, $s0, 1    # Produz um item (produz valores de 1 a 10)
 		lw $t1, full		# Carrega o valor de full
 		mul $t1, $t1, 4		# Multiplica full por 4 bytes = quantidade de inteiros no buffer
-		add $t2, $t1, $t0	# Salva o deslocamento do endereço do buffer em $t2 (topo)
+		add $t2, $t1, $t0	# Salva o deslocamento do endereco do buffer em $t2 (topo)
 		sw $s0, 0($t2)      # Armazena o valor do registrador $s0 no topo do buffer
 		
 		SyscallUpSemaphore(mutex)    # Libera acesso ao buffer
@@ -39,14 +39,14 @@ consumidor:
 	la $t0, buffer      # Carrega o endereco do buffer
 	loop2:
 		SyscallDownSemaphore(full)    # Verifica se pode consumir
-		SyscallDownSemaphore(mutex)    # Entra na região crítica (se mutex > 0)
+		SyscallDownSemaphore(mutex)    # Entra na regiao critica (se mutex > 0)
 		
 		lw $t1, full		# Carrega o valor de full
 		mul $t1, $t1, 4		# Multiplica full por 4 bytes = quantidade de inteiros no buffer
-		add $t2, $t1, $t0	# Salva o deslocamento do endereço do buffer em $t2 (topo)
+		add $t2, $t1, $t0	# Salva o deslocamento do endereï¿½o do buffer em $t2 (topo)
 		sw $0, 0($t2)       # Consome um item do buffer salvando o valor 0
 		
 		SyscallUpSemaphore(mutex)    # Libera acesso ao buffer
-		SyscallUpSemaphore(empty)    # Incrementa o contador de espaços vazios no buffer
+		SyscallUpSemaphore(empty)    # Incrementa o contador de espacos vazios no buffer
 		j loop2	
 	fim2:	SyscallProcessTerminate
