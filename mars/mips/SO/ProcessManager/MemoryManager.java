@@ -22,6 +22,10 @@ public abstract class MemoryManager {
         LRU,
     }
 
+    public static SchedulerEPag getSchedulerEPag() {
+        return schedulerEPag;
+    }
+
     public static void setPageSize(int pageSize) {
         MemoryManager.pageSize = pageSize;
     }
@@ -51,15 +55,19 @@ public abstract class MemoryManager {
 
                 if (upper >= upperP && upper <= lowerP) {
                     p.setLowerLimit(upper - 4);
-//                    System.out.println("Conflict Sup detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit()
-//                            + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: "
-//                            + upper);
+                    // System.out.println("Conflict Sup detected " + p.getPid() + " LowerLimit: " +
+                    // p.getLowerLimit()
+                    // + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado
+                    // upper: "
+                    // + upper);
                     conflict = true;
                 } else if (lower >= upperP && lower <= lowerP) {
                     process.setLowerLimit(upperP - 4);
-//                    System.out.println("Conflict Inf detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit()
-//                            + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: "
-//                            + upper);
+                    // System.out.println("Conflict Inf detected " + p.getPid() + " LowerLimit: " +
+                    // p.getLowerLimit()
+                    // + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado
+                    // upper: "
+                    // + upper);
                     conflict = true;
                 } else if (upperP >= upper && lowerP <= lower) {
                     process.setLowerLimit(upperP - 4);
@@ -103,8 +111,53 @@ public abstract class MemoryManager {
             // Salva a página no disco
         }
 
+        for (int i = 0; i < maxNumPages; i++) {
+            if (MMU.virtualTable.get(ProcessTable.getExecutionProcess()).getPage(i) == page) {
+                System.out.println("5 - Página removida: " + i + " do processo "
+                        + ProcessTable.getExecutionProcess().getPid() + ".");
+                break;
+            }
+        }
+
         // Remove a página da tabela de páginas virtuais
         MMU.virtualTable.get(ProcessTable.getExecutionProcess()).removePage(page);
         // página removida, agora é só adicionar a nova página
+    }
+
+    public static void SECOND_CHANCE() {
+        ProcessControlBlock process = ProcessTable.getExecutionProcess();
+        VirtualTable virtualTable = MMU.virtualTable.get(process);
+        Queue<VirtualTableEntry> processLastPage = MMU.lastPage.get(process);
+
+        // Procura por uma página a ser removida
+        VirtualTableEntry pageToRemove = null;
+        while (true) {
+            VirtualTableEntry page = processLastPage.poll();
+            if (page == null) {
+                break;
+            }
+            if (page.isReferencedPage()) {
+                // Se a página foi referenciada, define R como 0 e a coloca de volta no final da
+                // fila
+                page.setReferencedPage(false);
+                processLastPage.add(page);
+            } else {
+                // Se a página não foi referenciada, esta é a página a ser removida
+                pageToRemove = page;
+                break;
+            }
+        }
+
+        if (pageToRemove == null) {
+            // Se nenhuma página foi encontrada para remoção, reinicia o processo de
+            // verificação
+            for (VirtualTableEntry page : processLastPage) {
+                page.setReferencedPage(false);
+            }
+            pageToRemove = processLastPage.poll();
+        }
+
+        // Remove a página selecionada para substituição
+        virtualTable.removePage(pageToRemove);
     }
 }

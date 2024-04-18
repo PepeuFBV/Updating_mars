@@ -60,10 +60,10 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
 
         paginMethodLabel.setText("Paging Method");
 
-        numPagesCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "1", "2", "4", "8", "16" }));
+        numPagesCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "2", "4", "8", "16" }));
         numPagesCheckbox.setSelectedIndex(4);
 
-        instPageCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4" }));
+        instPageCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "2", "4" }));
         instPageCheckbox.setSelectedIndex(3);
 
         pagingMethodCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "NRU", "FIFO", "Segunda chance", "LRU" }));
@@ -282,7 +282,7 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
             for (VirtualTableEntry vte : virtualTable.getPages()) {
                 // Adiciona uma nova linha na tabela com os dados do ProcessControlBlock e da VirtualTableEntry
                 if (vte != null) {
-                    model.addRow(new Object[]{pcb.getPid(), pageIndex++, pcb.getRegisters()[pcb.getRegisters().length - 1].getValue()});
+                    model.addRow(new Object[]{pcb.getPid(), pageIndex++, vte.getFrameNumber()});
                 } else {
                     model.addRow(new Object[]{pcb.getPid(), pageIndex++, "Not allocated"});
                 }

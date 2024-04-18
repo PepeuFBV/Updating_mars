@@ -51,6 +51,7 @@ public class VirtualTable {
             if (virtualTable[i] == page) {
                 virtualTable[i] = null;
                 size--;
+                System.out.println("Página removida");
                 break;
             }
         }
