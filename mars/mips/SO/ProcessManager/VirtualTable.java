@@ -49,7 +49,7 @@ public class VirtualTable {
     public void removePage(VirtualTableEntry page) {
         for (int i = 0; i < size; i++) {
             if (virtualTable[i] == page) {
-                virtualTable[i] = null;
+                virtualTable[i] = new VirtualTableEntry();
                 size--;
                 System.out.println("Página removida");
                 break;

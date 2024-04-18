@@ -66,7 +66,6 @@ public abstract class MMU {
 
                 process.setHits(process.getHits() + 1);
                 MMU.hits++;
-                MemoryManagerTool.updateTable();
             } else {
                 // Se entrou aqui, é porque a instrução não foi encontrada na página. Ou seja, a
                 // página existe, mas a instrução não.
@@ -76,11 +75,11 @@ public abstract class MMU {
                 process.setMisses(process.getMisses() + 1);
                 MMU.misses++;
                 addInstruction(address, index, displacement, virtualTable1, process);
-                MemoryManagerTool.updateTable();
             }
 
             virtualTable1.getPage(index).setReferencedPage(true);
             virtualTable1.getPage(index).setPresent(true);
+            MemoryManagerTool.updateTable();
         }
     }
 
@@ -124,9 +123,9 @@ public abstract class MMU {
                 case NRU:
                     // chama lá
                 case FIFO:
-                    MemoryManager.FIFO();
+                    MemoryManager.FIFO();   
                 case SECOND_CHANCE:
-                    // chama lá
+                    MemoryManager.SECOND_CHANCE();
                 case LRU:
                     // chama lá
             }

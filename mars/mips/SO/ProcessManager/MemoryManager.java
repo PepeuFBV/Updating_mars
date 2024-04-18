@@ -6,6 +6,7 @@ import java.util.Queue;
 
 import mars.mips.hardware.AddressErrorException;
 import mars.simulator.Simulator;
+import mars.tools.MemoryManagerTool;
 
 public abstract class MemoryManager {
 
@@ -107,12 +108,12 @@ public abstract class MemoryManager {
         // Acha a página mais antiga para ser removida
         VirtualTableEntry page = MMU.lastPage.get(ProcessTable.getExecutionProcess()).poll();
 
-        if (page.isModifiedPage()) {
-            // Salva a página no disco
-        }
+        // if (page.isModifiedPage()) {
+        //     // Salva a página no disco
+        // }
 
         for (int i = 0; i < maxNumPages; i++) {
-            if (MMU.virtualTable.get(ProcessTable.getExecutionProcess()).getPage(i) == page) {
+            if (MMU.virtualTable.get(ProcessTable.getExecutionProcess()) != null && MMU.virtualTable.get(ProcessTable.getExecutionProcess()).getPage(i) == page) {
                 System.out.println("5 - Página removida: " + i + " do processo "
                         + ProcessTable.getExecutionProcess().getPid() + ".");
                 break;
