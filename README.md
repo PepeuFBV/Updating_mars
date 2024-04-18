@@ -47,6 +47,97 @@ The project was divided into the following parts:
     - Step 1: Virtual Memory Management Structures
     - Step 2: MMU and Page Table Implementation
 
+- Obs: The following macros were used in the assembly code throughout the project:
+
+_macros.asm_
+```assembly
+.macro PrintInt
+	li $v0,1
+	syscall
+.end_macro
+
+.macro PrintString
+	li $v0,4
+	syscall
+.end_macro
+
+.macro ReadInt
+	li $v0,5
+	syscall
+.end_macro
+
+.macro ReadString
+	li $v0,8
+	syscall
+.end_macro
+
+.macro Done
+	li $v0,10
+	syscall
+.end_macro
+
+.macro PrintChar
+	li $v0,11
+	syscall
+.end_macro
+
+.macro ReadChar
+	li $v0,12
+	syscall
+.end_macro
+
+.macro Return (%termination_value)
+	li $a0, %termination_value
+	bltz $a0, exit
+	Done 
+	exit: Exit2($a0)
+.end_macro
+
+.macro Exit2(%exit_value)
+	move $a0, %exit_value
+	PrintInt
+	li $v0,10
+	syscall
+.end_macro
+
+.macro LoadVar(%label, %reg)
+	lw %reg, %label
+.end_macro
+
+.macro StoreVar(%label, %reg)
+	sw %reg, %label
+.end_macro
+
+.macro SyscallFork(%label)
+	la $a0, %label
+	li $a2, 0		# differentiates the SyscallFork macros to a unique Java class
+	li $v0, 18
+	syscall
+.end_macro
+
+.macro SyscallFork(%label, %priority)
+	la $a0, %label
+	la $a1, %priority
+	li $a2, 1		# if $a2 value is 1, theres a process with priority
+	li $v0, 18
+	syscall
+.end_macro
+.macro SyscallProcessChange
+	li $v0, 19
+	syscall
+.end_macro
+.macro SyscallProcessTerminate
+	li $v0, 20
+	syscall
+.end_macro
+
+.macro SyscallCreateSemaphore(%init)
+	la $a0, %init
+	lw $a1, %init
+	li $v0, 21
+	syscall
+.end_macro
+```
 ---
 ### Part 1
 
@@ -231,96 +322,6 @@ For synchronization of the processes, we implemented 4 extra syscalls for the se
 
 Extra - For testing purposes we created the producer-consumer problem using semaphores. The following assembly code was used:
 
-_macros.asm_
-```assembly
-.macro PrintInt
-	li $v0,1
-	syscall
-.end_macro
-
-.macro PrintString
-	li $v0,4
-	syscall
-.end_macro
-
-.macro ReadInt
-	li $v0,5
-	syscall
-.end_macro
-
-.macro ReadString
-	li $v0,8
-	syscall
-.end_macro
-
-.macro Done
-	li $v0,10
-	syscall
-.end_macro
-
-.macro PrintChar
-	li $v0,11
-	syscall
-.end_macro
-
-.macro ReadChar
-	li $v0,12
-	syscall
-.end_macro
-
-.macro Return (%termination_value)
-	li $a0, %termination_value
-	bltz $a0, exit
-	Done 
-	exit: Exit2($a0)
-.end_macro
-
-.macro Exit2(%exit_value)
-	move $a0, %exit_value
-	PrintInt
-	li $v0,10
-	syscall
-.end_macro
-
-.macro LoadVar(%label, %reg)
-	lw %reg, %label
-.end_macro
-
-.macro StoreVar(%label, %reg)
-	sw %reg, %label
-.end_macro
-
-.macro SyscallFork(%label)
-	la $a0, %label
-	li $a2, 0		# differentiates the SyscallFork macros to a unique Java class
-	li $v0, 18
-	syscall
-.end_macro
-
-.macro SyscallFork(%label, %priority)
-	la $a0, %label
-	la $a1, %priority
-	li $a2, 1		# if $a2 value is 1, theres a process with priority
-	li $v0, 18
-	syscall
-.end_macro
-.macro SyscallProcessChange
-	li $v0, 19
-	syscall
-.end_macro
-.macro SyscallProcessTerminate
-	li $v0, 20
-	syscall
-.end_macro
-
-.macro SyscallCreateSemaphore(%init)
-	la $a0, %init
-	lw $a1, %init
-	li $v0, 21
-	syscall
-.end_macro
-```
----
 _semaphore.asm_
 ```assembly
 .include "macros.asm"
@@ -383,3 +384,50 @@ consumidor:
 ### Step 1: Virtual Memory Management Structures
 
 For the virtual memory management structures, we implemented registers for the upper and lower limits of the process memory in the PCB. The registers are used to store the memory limits of the process and every time the process is changed, the memory limits are updated. The memory limits are used to check if the process is trying to access a memory address that is out of its memory limits. A memory manager class was created to manage the memory limits and check if the process is trying to access a memory address that is out of its memory limits.
+
+Extra - For testing purposes the following assembly code was used:
+
+```assembly
+.include "macros.asm"
+
+.data
+.text             
+	#criação dos processos
+SyscallFork(Programa1)
+	SyscallFork(Programa2)
+	SyscallFork(Idle)
+	#escalonando o primeiro processo
+SyscallProcessChange
+	
+Idle:					
+	loop:
+NOP
+j loop
+```
+
+```assembly
+Programa1:					
+		addi $s1, $zero, 1 # valor inicial do contador
+		addi $s2, $zero, 10 # valor limite do contador
+	loop1: 	addi $s1, $s1, 1
+		beq $s1, $s2, fim1
+j loop1
+	fim1:	SyscallProcessTerminate
+
+Programa2: 
+		addi $s1, $zero, -1 # valor inicial do contador
+		addi $s2, $zero, -10 # valor limite do contador
+	loop2: 	addi $s1, $s1, -1
+		beq $s1, $s2, fim2
+		j loop2
+	fim2:	SyscallProcessTerminate
+```
+
+---
+### Step 2: MMU and Page Table Implementation
+
+For this part of the project, we implemented the MMU, VirtualTable and VirtualTableEntry classes. The MMU class is responsible for translating the virtual address to the physical address and maintaining the page table. The VirtualTable class is responsible for storing the page table entries and the VirtualTableEntry class is responsible for storing the page table entry information. A tool was also created to auxiliate the user, the Memory Management Tool, which allows the user to set the page size, the number of pages, choose the paging method, see all the page table entries, see the physical address of a virtual address, see the frames, see the total number of page faults, hits and misses, and reset the page table.
+
+The paging methods that were implemented: FIFO, LRU, NRU and Second Chance, through the tool the user is able to choose the paging method that will be used and also set the page size and the number of pages. Allowing for the quick and easy management of the page table entries.
+
+![Memory Management Tool](/MMUTool.jpg)
