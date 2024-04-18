@@ -44,15 +44,15 @@ public abstract class MemoryManager {
 
                 if (upper >= upperP && upper <= lowerP) {
                     p.setLowerLimit(upper - 4);
-                    System.out.println("Conflict Sup detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit()
-                            + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: "
-                            + upper);
+//                    System.out.println("Conflict Sup detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit()
+//                            + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: "
+//                            + upper);
                     conflict = true;
                 } else if (lower >= upperP && lower <= lowerP) {
                     process.setLowerLimit(upperP - 4);
-                    System.out.println("Conflict Inf detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit()
-                            + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: "
-                            + upper);
+//                    System.out.println("Conflict Inf detected " + p.getPid() + " LowerLimit: " + p.getLowerLimit()
+//                            + " UpperLimit: " + p.getUpperLimit() + " Criado lower: " + lower + " criado upper: "
+//                            + upper);
                     conflict = true;
                 } else if (upperP >= upper && lowerP <= lower) {
                     process.setLowerLimit(upperP - 4);

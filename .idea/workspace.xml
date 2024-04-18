@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="399e5b47-ebc7-4c08-b38a-30c1e19c6bd0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/Buffer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallCreateSemaphore.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallDownSemaphore.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallTerminateSemaphore.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallUpSemaphore.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Syscall.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Syscall.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/ProcessTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/ProcessTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/Scheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/Scheduler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/macros.asm" beforeDir="false" afterPath="$PROJECT_DIR$/test/macros.asm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/syscall_1.3.2_priority.asm" beforeDir="false" afterPath="$PROJECT_DIR$/test/syscall_1.3.2_priority.asm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/MemoryManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/MemoryManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/syscall_1.2.asm" beforeDir="false" afterPath="$PROJECT_DIR$/test/syscall_1.2.asm" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,24 +45,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.run.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;F:/Documents/CC/2023.2/Sistemas Operacionais/Unidade II/Implementação/Updating_mars&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.importing&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.run.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "2.1",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "F:/Documents/CC/2023.2/Sistemas Operacionais/Unidade II/Implementação/Updating_mars",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settings.project.maven.importing",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="run" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="Mars" />
