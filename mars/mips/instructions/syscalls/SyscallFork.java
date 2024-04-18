@@ -55,7 +55,6 @@ public class SyscallFork extends AbstractSyscall {
         var virtualTable = new VirtualTable(MemoryManager.maxNumPages);
         MMU.virtualTable.put(fork, virtualTable);
         var queue = new LinkedList<VirtualTableEntry>();
-
         MMU.lastPage.put(fork, queue);
 
         // Save the actual context, same as execution process

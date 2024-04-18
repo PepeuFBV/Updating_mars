@@ -7,7 +7,7 @@ public class VirtualTable {
 
     public VirtualTable(int size) {
         virtualTable = new VirtualTableEntry[size];
-        this.size = size;
+        this.size = 0;
     }
 
     public VirtualTableEntry getPage(int numPage) {
@@ -45,4 +45,14 @@ public class VirtualTable {
         return size;
     }
 
+    // método para remover uma página da tabela de páginas virtuais que recebe como parâmetro a página a ser removida
+    public void removePage(VirtualTableEntry page) {
+        for (int i = 0; i < size; i++) {
+            if (virtualTable[i] == page) {
+                virtualTable[i] = null;
+                size--;
+                break;
+            }
+        }
+    }
 }

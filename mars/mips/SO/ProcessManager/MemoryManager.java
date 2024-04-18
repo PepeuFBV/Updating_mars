@@ -95,23 +95,16 @@ public abstract class MemoryManager {
     // Implementar algoritmo FIFO de troca de página virtual
 
     public static void FIFO() {
-        // Obtém o processo em execução
-        ProcessControlBlock procExec = ProcessTable.getExecutionProcess();
-        if (procExec == null) {
-            return; // Se não houver processo em execução, saia do método
+        // Implementar algoritmo FIFO de troca de página virtual
+        // Acha a página mais antiga para ser removida
+        VirtualTableEntry page = MMU.lastPage.get(ProcessTable.getExecutionProcess()).poll();
+
+        if (page.isModifiedPage()) {
+            // Salva a página no disco
         }
 
-        // Obtém a lista de blocos associada ao processo em execução
-        VirtualTable entries = MMU.virtualTable.get(procExec);
-        Queue<VirtualTableEntry> lastEntries = MMU.lastPage.get(procExec);
-
-        // Remove o primeiro bloco na fila (FIFO)
-        VirtualTableEntry removedEntry = lastEntries.poll();
-
-        // Desloca todos os blocos restantes uma posição para a esquerda
-        for (int i = 0; i < entries.getSize() - 1; i++) {
-            //entries.setPage(i, entries.getPage(i + 1));
-            //entries[i] = entries[i + 1];
-        }
+        // Remove a página da tabela de páginas virtuais
+        MMU.virtualTable.get(ProcessTable.getExecutionProcess()).removePage(page);
+        // página removida, agora é só adicionar a nova página
     }
 }

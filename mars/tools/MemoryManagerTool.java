@@ -282,7 +282,7 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
             for (VirtualTableEntry vte : virtualTable.getPages()) {
                 // Adiciona uma nova linha na tabela com os dados do ProcessControlBlock e da VirtualTableEntry
                 if (vte != null) {
-                    model.addRow(new Object[]{pcb.getPid(), pageIndex++, vte.getFrameNumber()});
+                    model.addRow(new Object[]{pcb.getPid(), pageIndex++, pcb.getRegisters()[pcb.getRegisters().length - 1].getValue()});
                 } else {
                     model.addRow(new Object[]{pcb.getPid(), pageIndex++, "Not allocated"});
                 }
@@ -293,20 +293,20 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
             pagesReplacementsTxt.setText(Integer.toString(MMU.pageReplacements));
         }
 
-        System.out.println("Map:");
-        for (Map.Entry<ProcessControlBlock, VirtualTable> entry : MMU.virtualTable.entrySet()) {
-            ProcessControlBlock pcb = entry.getKey();
-            VirtualTable virtualTable = entry.getValue();
+        // System.out.println("Map:");
+        // for (Map.Entry<ProcessControlBlock, VirtualTable> entry : MMU.virtualTable.entrySet()) {
+        //     ProcessControlBlock pcb = entry.getKey();
+        //     VirtualTable virtualTable = entry.getValue();
 
-            int pageIndex = 0;
-            for (VirtualTableEntry vte : virtualTable.getPages()) {
-                if (vte != null) {
-                    System.out.println("PID: " + pcb.getPid() + " Page Index: " + pageIndex + " Frame Number: " + vte.getFrameNumber());
-                } else {
-                    System.out.println("PID: " + pcb.getPid() + " Page Index: " + pageIndex + " Not allocated");
-                }
-            }
-        }
+        //     int pageIndex = 0;
+        //     for (VirtualTableEntry vte : virtualTable.getPages()) {
+        //         if (vte != null) {
+        //             System.out.println("PID: " + pcb.getPid() + " Page Index: " + pageIndex + " Frame Number: " + vte.getFrameNumber());
+        //         } else {
+        //             System.out.println("PID: " + pcb.getPid() + " Page Index: " + pageIndex + " Not allocated");
+        //         }
+        //     }
+        // }
     }
 
     @Override

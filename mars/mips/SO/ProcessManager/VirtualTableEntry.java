@@ -122,5 +122,4 @@ public class VirtualTableEntry {
   public void setFrameNumber(int frameNumber) {
     this.frameNumber = frameNumber;
   }
-
 }

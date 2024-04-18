@@ -16,8 +16,7 @@ public abstract class MMU {
      * virtual table entry.
      */
     public static final Map<ProcessControlBlock, VirtualTable> virtualTable = new LinkedHashMap<>(
-            Collections.singletonMap(ProcessTable.getExecutionProcess(), new VirtualTable(MemoryManager.maxNumPages))
-    );
+            Collections.singletonMap(ProcessTable.getExecutionProcess(), new VirtualTable(MemoryManager.maxNumPages)));
     public static Map<ProcessControlBlock, Queue<VirtualTableEntry>> lastPage = new LinkedHashMap<>();
     public static int hits;
     public static int misses;
@@ -27,16 +26,22 @@ public abstract class MMU {
         ProcessControlBlock process = ProcessTable.getExecutionProcess();
         VirtualTable virtualTable = MMU.virtualTable.get(process);
 
-        if (virtualTable.getSize() == MemoryManager.maxNumPages) {
+        if (virtualTable.getSize() < MemoryManager.maxNumPages) {
+            System.out.println("Instrução adicionada na página " + numPage + " do processo " + process.getPid() + ".");
             if (virtualTable.getPage(numPage) == null) {
                 virtualTable.createPage(numPage);
-                MMU.virtualTable.put(process, virtualTable);
-            } else {
                 virtualTable.getPage(numPage).addInstruction(addressInstructions, displacement);
                 MMU.virtualTable.put(process, virtualTable);
+                lastPage.get(process).add(virtualTable.getPage(numPage));
+            } else if (virtualTable.getPage(numPage) != null) {
+                virtualTable.getPage(numPage).addInstruction(addressInstructions, displacement);
+                MMU.virtualTable.put(process, virtualTable);
+                lastPage.get(process).add(virtualTable.getPage(numPage));
             }
-        } else {
-            // ALGORITMO DE SUBSTITUIÇÃO DE PÁGINA.
+        } else if (virtualTable.getSize() == MemoryManager.maxNumPages){
+            // Com base no algoritmo de substituição de páginas escolhido na ferramenta MemomryManagerToo.java
+            // é necessário substituir uma página
+
             process.setPageFaults(process.getPageFaults() + 1);
             MMU.pageReplacements++;
             System.out.println("Substituindo página...");
