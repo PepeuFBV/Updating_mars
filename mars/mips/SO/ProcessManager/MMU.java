@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Queue;
 import mars.mips.SO.ProcessManager.MemoryManager.SchedulerEPag;
 import mars.mips.hardware.AddressErrorException;
+import mars.tools.MemoryManagerTool;
 
 /**
  * Memory Management Unit
@@ -48,7 +49,10 @@ public abstract class MMU {
             process.setMisses(process.getMisses() + 1);
             MMU.misses++;
             addPageNull(address, index, displacement, virtualTable1, process);
+            MemoryManagerTool.updateTable();
+
             virtualTable1.getPage(index).setReferencedPage(true);
+            virtualTable1.getPage(index).setPresent(true);
         } else {
             // Se entrou aqui, é porque a página não é nula, ou seja, existe.
 
@@ -62,8 +66,7 @@ public abstract class MMU {
 
                 process.setHits(process.getHits() + 1);
                 MMU.hits++;
-                virtualTable1.getPage(index).setReferencedPage(true);
-
+                MemoryManagerTool.updateTable();
             } else {
                 // Se entrou aqui, é porque a instrução não foi encontrada na página. Ou seja, a
                 // página existe, mas a instrução não.
@@ -73,9 +76,11 @@ public abstract class MMU {
                 process.setMisses(process.getMisses() + 1);
                 MMU.misses++;
                 addInstruction(address, index, displacement, virtualTable1, process);
-                virtualTable1.getPage(index).setReferencedPage(true);
-
+                MemoryManagerTool.updateTable();
             }
+
+            virtualTable1.getPage(index).setReferencedPage(true);
+            virtualTable1.getPage(index).setPresent(true);
         }
     }
 
@@ -139,6 +144,7 @@ public abstract class MMU {
                 lastPage.put(process, processLastPage);
             }
             processLastPage.add(virtualTable.getPage(numPage));
+            virtualTable.getPage(numPage).setModifiedPage(true); 
 
             System.out.println("6 - Página " + numPage + " adicionada");
             System.out.println("7 - Número de páginas do processo "
