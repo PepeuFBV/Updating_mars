@@ -46,7 +46,7 @@ public abstract class ProcessTable {
 	 * Method for displaying all processes for debugging.
 	 */
 	public static void listProcesses() {
-        System.out.println("PID\tAddress\tState");
+        System.out.println("\nPID\tAddress\tState");
 
         // Show ready processes
         for (ProcessControlBlock processo : readyProcesses) {

@@ -90,9 +90,9 @@ public class ProcessControlBlock {
 	}
 
 	// More special registers
-	private static Register programCounter = new Register("pc", 32, Memory.textBaseAddress);
-	private static Register hi = new Register("hi", 33, 0);// this is an internal register with arbitrary number
-	private static Register lo = new Register("lo", 34, 0);// this is an internal register with arbitrary number
+	private Register programCounter = new Register("pc", 32, Memory.textBaseAddress);
+	private Register hi = new Register("hi", 33, 0);// this is an internal register with arbitrary number
+	private Register lo = new Register("lo", 34, 0);// this is an internal register with arbitrary number
 
 	public Register getProgramCounter() {
         return programCounter;

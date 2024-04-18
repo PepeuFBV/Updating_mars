@@ -5,7 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="399e5b47-ebc7-4c08-b38a-30c1e19c6bd0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/ProcessControlBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/ProcessControlBlock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/ProcessTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/ProcessTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/Scheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/Scheduler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallFork.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallFork.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallProcessChange.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallProcessChange.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/macros.asm.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/syscall_1.2.asm.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

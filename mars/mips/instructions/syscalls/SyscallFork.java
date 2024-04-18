@@ -25,7 +25,7 @@ public class SyscallFork extends AbstractSyscall {
      */
     @Override
     public void simulate(ProgramStatement statement) throws ProcessingException {
-        // Gets the initial address of the process in $a0
+        // Gets the initial address of the process in $a0 (address: 4)
         int processAddress = RegisterFile.getValue(4);
         
         // Instantiate a new PCB for the process

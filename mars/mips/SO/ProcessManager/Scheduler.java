@@ -29,14 +29,12 @@ public abstract class Scheduler {
 	/**
 	 * Schedule process using First-In-First-Out algorithm.
 	 */
-	private static void scheduleFIFO() {
-		ProcessControlBlock nextProcess;
-		if (!ProcessTable.getReadyProcesses().isEmpty()) {
-			nextProcess = ProcessTable.getReadyProcesses().pop(); // Remove the process from ready process list
-			nextProcess.copyToHardware(); // Retrieves the context to PCB
-			nextProcess.setState(ProcessControlBlock.ProcessState.RUNNING); // Change state
-			ProcessTable.setExecutionProcess(nextProcess); // Set the new process in execution
-		}
+	public static void scheduleFIFO() {
+		// Remove the process from ready process list
+		ProcessControlBlock nextProcess = ProcessTable.getReadyProcesses().pop();
+		nextProcess.copyToHardware(); // Retrieves the context to PCB
+		nextProcess.setState(ProcessControlBlock.ProcessState.RUNNING); // Change state
+		ProcessTable.setExecutionProcess(nextProcess); // Set the new process in execution
 	}
 
 	/**
