@@ -102,15 +102,16 @@ public abstract class MemoryManager {
         }
 
         // Obtém a lista de blocos associada ao processo em execução
-        VirtualTableEntry[] entries = MMU.pageTable.get(procExec);
+        VirtualTable entries = MMU.virtualTable.get(procExec);
         Queue<VirtualTableEntry> lastEntries = MMU.lastPage.get(procExec);
 
         // Remove o primeiro bloco na fila (FIFO)
         VirtualTableEntry removedEntry = lastEntries.poll();
 
         // Desloca todos os blocos restantes uma posição para a esquerda
-        for (int i = 0; i < entries.length - 1; i++) {
-            entries[i] = entries[i + 1];
+        for (int i = 0; i < entries.getSize() - 1; i++) {
+            //entries.setPage(i, entries.getPage(i + 1));
+            //entries[i] = entries[i + 1];
         }
     }
 }

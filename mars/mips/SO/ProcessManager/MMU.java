@@ -11,102 +11,67 @@ import mars.mips.hardware.AddressErrorException;
  * Memory Management Unit
  */
 public abstract class MMU {
-<<<<<<< Updated upstream
-  /**
-   * Represents a block of instructions in the virtual memory.
-   * Also known as a virtual table entry.
-   */
-  public static final Map<ProcessControlBlock, VirtualTableEntry[]> pageTable = new LinkedHashMap<>();
-  public static Map<ProcessControlBlock, Queue<VirtualTableEntry>> lastPage = new LinkedHashMap<>();
-=======
->>>>>>> Stashed changes
-
     /**
      * Represents a block of instructions in the virtual memory. Also known as a
      * virtual table entry.
      */
-    public static final Map<ProcessControlBlock, VirtualTableEntry[]> pageTable = new LinkedHashMap<>(
-            Collections.singletonMap(ProcessTable.getExecutionProcess(), new VirtualTableEntry[MemoryManager.maxNumPages])
+    public static final Map<ProcessControlBlock, VirtualTable> virtualTable = new LinkedHashMap<>(
+            Collections.singletonMap(ProcessTable.getExecutionProcess(), new VirtualTable(MemoryManager.maxNumPages))
     );
+    public static Map<ProcessControlBlock, Queue<VirtualTableEntry>> lastPage = new LinkedHashMap<>();
+    public static int hits;
+    public static int misses;
+    public static int pageReplacements;
 
-<<<<<<< Updated upstream
-    if (pageTable.length < MemoryManager.maxNumPages) {
-      if (pageTable[numPage] == null) {
-        VirtualTableEntry newPage = new VirtualTableEntry();
-        newPage.addInstruction(addressInstructions, displacement);
-        newPage.setPresent(true);
-        pageTable[numPage] = newPage;
-        MMU.pageTable.put(process, pageTable);
-        MMU.lastPage.get(process).add(newPage);
-      } else {
-        pageTable[numPage].addInstruction(addressInstructions, displacement);
-        MMU.pageTable.put(process, pageTable);
-      }
-    } else {
-      // ALGORITMO DE SUBSTITUIÇÃO DE PÁGINA.
-      process.setPageFaults(process.getPageFaults() + 1);
-=======
     public static void addInstruction(int addressInstructions, int numPage, int displacement) {
         ProcessControlBlock process = ProcessTable.getExecutionProcess();
-        VirtualTableEntry[] pageTable = MMU.pageTable.get(process);
+        VirtualTable virtualTable = MMU.virtualTable.get(process);
 
-        if (pageTable.length < MemoryManager.maxNumPages) {
-            if (pageTable[numPage] == null) {
-                VirtualTableEntry newPage = new VirtualTableEntry();
-                newPage.addInstruction(addressInstructions, displacement);
-                newPage.setPresent(true);
-                pageTable[numPage] = newPage;
-                MMU.pageTable.put(process, pageTable);
+        if (virtualTable.getSize() == MemoryManager.maxNumPages) {
+            if (virtualTable.getPage(numPage) == null) {
+                virtualTable.createPage(numPage);
+                MMU.virtualTable.put(process, virtualTable);
             } else {
-                pageTable[numPage].addInstruction(addressInstructions, displacement);
-                MMU.pageTable.put(process, pageTable);
+                virtualTable.getPage(numPage).addInstruction(addressInstructions, displacement);
+                MMU.virtualTable.put(process, virtualTable);
             }
         } else {
             // ALGORITMO DE SUBSTITUIÇÃO DE PÁGINA.
             process.setPageFaults(process.getPageFaults() + 1);
-            System.out.println("Entrando aqui?");
+            MMU.pageReplacements++;
+            System.out.println("Substituindo página...");
         }
->>>>>>> Stashed changes
     }
 
-<<<<<<< Updated upstream
-  public static void deletProcess(ProcessControlBlock process) {
-    MMU.pageTable.remove(process);
-  }
+    public static void deletProcess(ProcessControlBlock process) {
+        MMU.virtualTable.remove(process);
+    }
 
-  public static void verifyInstruction(int address) throws AddressErrorException {
-    // Verify if the instruction is in the page table
-    // If not, call the page fault handler
-    ProcessControlBlock process = ProcessTable.getExecutionProcess();
-    VirtualTableEntry[] pageTable = MMU.pageTable.get(process);
-    
-    int index = ((address / (MemoryManager.pageSize * 4)) % MemoryManager.maxNumPages);
-    int displacement = (address / 4) % MemoryManager.pageSize;
-=======
     public static void verifyInstruction(int address) throws AddressErrorException {
         // Verify if the instruction is in the page table
         // If not, call the page fault handler
         ProcessControlBlock process = ProcessTable.getExecutionProcess();
-        VirtualTableEntry[] virtualTableProcess = MMU.pageTable.get(process);
+        VirtualTable virtualTable1 = MMU.virtualTable.get(process);
 
-        int mascara = 0b00000011;
-        int index = (address / (MemoryManager.pageSize * 4)) & mascara;
+        int index = ((address / (MemoryManager.pageSize * 4)) % MemoryManager.maxNumPages);
         int displacement = (address / 4) % MemoryManager.pageSize;
->>>>>>> Stashed changes
 
-        if (virtualTableProcess[index] == null) {
+        if (virtualTable1.getPage(index) == null) {
 
             process.setMisses(process.getMisses() + 1);
+            MMU.misses++;
             addInstruction(address, index, displacement);
 
         } else {
-            if (virtualTableProcess[index].getInstructions()[displacement] == address && virtualTableProcess[index].isPresent()) {
+            if (virtualTable1.getPage(index).getInstructions()[displacement] == address && virtualTable1.getPage(index).isPresent()) {
                 process.setHits(process.getHits() + 1);
-                virtualTableProcess[index].setReferencedPage(true);
+                MMU.hits++;
+                virtualTable1.getPage(index).setReferencedPage(true);
                 return;
             }
 
             process.setMisses(process.getMisses() + 1);
+            MMU.misses++;
             addInstruction(address, index, displacement);
         }
     }

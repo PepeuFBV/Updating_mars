@@ -14,6 +14,7 @@ public class VirtualTableEntry {
   private protectionBits protection;
   private boolean present;
   private int frameNumber;
+  private int size;
 
   public int[] getInstructions() {
     return instructions;
@@ -28,11 +29,21 @@ public class VirtualTableEntry {
       return;
     }
     instructions = new int[MemoryManager.pageSize];
+    size = 1;
     System.arraycopy(instructions, 0, this.instructions, 0, instructions.length);
   }
 
   public void addInstruction(int address, int displacement) {
+    if (instructions[displacement] != 0) {
+      size++;
+    }
+
     instructions[displacement] = address;
+    frameNumber = displacement;
+  }
+
+  public int size() {
+    return size;
   }
 
   /**

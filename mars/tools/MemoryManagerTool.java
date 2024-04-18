@@ -9,24 +9,24 @@ import mars.mips.SO.ProcessManager.MMU;
 import mars.mips.SO.ProcessManager.MemoryManager;
 import mars.mips.SO.ProcessManager.ProcessControlBlock;
 import mars.mips.SO.ProcessManager.VirtualTableEntry;
+import mars.mips.SO.ProcessManager.VirtualTable;
 import mars.mips.hardware.AccessNotice;
 import mars.mips.hardware.Memory;
-import mars.mips.hardware.MemoryAccessNotice;
 
 public class MemoryManagerTool extends AbstractMarsToolAndApplication {
 
     private JLabel hitsLabel;
-    private JTextField hitsTxt;
+    private JLabel hitsTxt;
     private JComboBox<String> instPageCheckbox;
     private JLabel instPageLabel;
     private JPanel mainPanel;
     private JScrollPane jScrollPane1;
     private JLabel missesLabel;
-    private JTextField missesTxt;
+    private JLabel missesTxt;
     private JComboBox<String> numPagesCheckbox;
     private JLabel numPagesLabel;
     private JLabel pagesReplacementsLabel;
-    private JTextField pagesReplacementsTxt;
+    private JLabel pagesReplacementsTxt;
     private JLabel paginMethodLabel;
     private JComboBox<String> pagingMethodCheckbox;
     private JTable table;
@@ -49,9 +49,9 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
         hitsLabel = new JLabel();
         missesLabel = new JLabel();
         pagesReplacementsLabel = new JLabel();
-        hitsTxt = new JTextField();
-        missesTxt = new JTextField();
-        pagesReplacementsTxt = new JTextField();
+        hitsTxt = new JLabel();
+        missesTxt = new JLabel();
+        pagesReplacementsTxt = new JLabel();
         startButton = new JButton("Start");
 
         numPagesLabel.setText("# Pages");
@@ -106,15 +106,12 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
 
         pagesReplacementsLabel.setText("Pages Replacements");
 
-        hitsTxt.setEditable(false);
         hitsTxt.setText("0");
         hitsTxt.setEnabled(false);
 
-        missesTxt.setEditable(false);
         missesTxt.setText("0");
         missesTxt.setEnabled(false);
 
-        pagesReplacementsTxt.setEditable(false);
         pagesReplacementsTxt.setText("0");
         pagesReplacementsTxt.setEnabled(false);
 
@@ -249,7 +246,7 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
 //        System.out.println("max num pages = " + MemoryManager.maxNumPages);
 //        System.out.println("paging method = " + MemoryManager.schedulerEPag);
 
-        updateTable(MMU.pageTable);
+        updateTable();
     }
     
     @Override
@@ -269,20 +266,20 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
     
     @Override
     protected void updateDisplay() {
-        updateTable(MMU.pageTable);
+        updateTable();
     }
     
-    private void updateTable(Map<ProcessControlBlock, VirtualTableEntry[]> pageTable) {
+    private void updateTable() {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0); // Limpa a tabela antes de adicionar novos dados
 
         // Percorre o mapa e adiciona as entradas na tabela
-        for (Map.Entry<ProcessControlBlock, VirtualTableEntry[]> entry : pageTable.entrySet()) {
+        for (Map.Entry<ProcessControlBlock, VirtualTable> entry : MMU.virtualTable.entrySet()) {
             ProcessControlBlock pcb = entry.getKey();
-            VirtualTableEntry[] virtualTable = entry.getValue();
+            VirtualTable virtualTable = entry.getValue();
 
             int pageIndex = 0;
-            for (VirtualTableEntry vte : virtualTable) {
+            for (VirtualTableEntry vte : virtualTable.getPages()) {
                 // Adiciona uma nova linha na tabela com os dados do ProcessControlBlock e da VirtualTableEntry
                 if (vte != null) {
                     model.addRow(new Object[]{pcb.getPid(), pageIndex++, vte.getFrameNumber()});
@@ -291,9 +288,24 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
                 }
             }
             
-            hitsTxt.setText(Integer.toString(pcb.getHits()));
-            missesTxt.setText(Integer.toString(pcb.getMisses()));
-            pagesReplacementsTxt.setText(Integer.toString(pcb.getPageFaults()));
+            hitsTxt.setText(Integer.toString(MMU.hits));
+            missesTxt.setText(Integer.toString(MMU.misses));
+            pagesReplacementsTxt.setText(Integer.toString(MMU.pageReplacements));
+        }
+
+        System.out.println("Map:");
+        for (Map.Entry<ProcessControlBlock, VirtualTable> entry : MMU.virtualTable.entrySet()) {
+            ProcessControlBlock pcb = entry.getKey();
+            VirtualTable virtualTable = entry.getValue();
+
+            int pageIndex = 0;
+            for (VirtualTableEntry vte : virtualTable.getPages()) {
+                if (vte != null) {
+                    System.out.println("PID: " + pcb.getPid() + " Page Index: " + pageIndex + " Frame Number: " + vte.getFrameNumber());
+                } else {
+                    System.out.println("PID: " + pcb.getPid() + " Page Index: " + pageIndex + " Not allocated");
+                }
+            }
         }
     }
 

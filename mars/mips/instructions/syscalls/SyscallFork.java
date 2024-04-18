@@ -2,12 +2,11 @@ package mars.mips.instructions.syscalls;
 
 import mars.ProcessingException;
 import mars.ProgramStatement;
-import mars.mips.SO.ProcessManager.MMU;
-import mars.mips.SO.ProcessManager.MemoryManager;
-import mars.mips.SO.ProcessManager.ProcessControlBlock;
-import mars.mips.SO.ProcessManager.ProcessTable;
-import mars.mips.SO.ProcessManager.VirtualTableEntry;
+import mars.mips.SO.ProcessManager.*;
 import mars.mips.hardware.RegisterFile;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Service to create a process.
@@ -52,14 +51,12 @@ public class SyscallFork extends AbstractSyscall {
 
             fork.setPriority(priority);
         }
-<<<<<<< Updated upstream
-        
-        
-=======
 
->>>>>>> Stashed changes
-        var pageTable = new VirtualTableEntry[MemoryManager.pageSize];
-        MMU.pageTable.put(fork, pageTable);
+        var virtualTable = new VirtualTable(MemoryManager.maxNumPages);
+        MMU.virtualTable.put(fork, virtualTable);
+        var queue = new LinkedList<VirtualTableEntry>();
+
+        MMU.lastPage.put(fork, queue);
 
         // Save the actual context, same as execution process
         fork.copyFromHardware();
