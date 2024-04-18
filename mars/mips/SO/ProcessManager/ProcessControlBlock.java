@@ -77,19 +77,19 @@ public class ProcessControlBlock {
     public void setProgramCounter(Register programCounter) {
         this.programCounter = programCounter;
     }
-    
+
     public Register getHi() {
         return hi;
     }
-    
+
     public void setHi(Register hi) {
         this.hi = hi;
     }
-    
+
     public Register getLo() {
         return lo;
     }
-    
+
     public void setLo(Register lo) {
         this.lo = lo;
     }
@@ -98,7 +98,6 @@ public class ProcessControlBlock {
     private int pid;
     private int programAddress;
     private ProcessState state;
-    
     // Possible states for a process
     public static enum ProcessState {
         READY, RUNNING, BLOCKED

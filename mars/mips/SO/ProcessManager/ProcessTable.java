@@ -39,7 +39,6 @@ public abstract class ProcessTable {
      * @param newState New process state
      */
     public static void changeState(ProcessControlBlock.ProcessState newState) {
-
         executionProcess.setState(newState);
     }
     
