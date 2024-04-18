@@ -7,6 +7,7 @@ import mars.mips.hardware.*;
 import mars.mips.instructions.*;
 import java.util.*;
 import javax.swing.*;
+import mars.mips.SO.ProcessManager.MMU;
 import mars.mips.SO.ProcessManager.MemoryManager;
 import mars.tools.TimerTool;
 import mars.mips.SO.ProcessManager.ProcessTable;
@@ -338,6 +339,7 @@ public class Simulator extends Observable {
                 // Verify if address of the current statement is between the upper and lower limits of the execution process
                 try {
                     MemoryManager.verifyMemory();
+                    MMU.verifyInstruction(pc);
                 } catch (AddressErrorException aee) {
                     ErrorList el = new ErrorList();
                     el.add(new ErrorMessage((MIPSprogram) null, 0, 0, aee.getMessage()));

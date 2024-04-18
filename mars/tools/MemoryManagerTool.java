@@ -1,7 +1,17 @@
 package mars.tools;
 
+import java.awt.event.ActionEvent;
+import java.util.Map;
+import java.util.Observable;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import mars.mips.SO.ProcessManager.MMU;
+import mars.mips.SO.ProcessManager.MemoryManager;
+import mars.mips.SO.ProcessManager.ProcessControlBlock;
+import mars.mips.SO.ProcessManager.VirtualTableEntry;
+import mars.mips.hardware.AccessNotice;
+import mars.mips.hardware.Memory;
+import mars.mips.hardware.MemoryAccessNotice;
 
 public class MemoryManagerTool extends AbstractMarsToolAndApplication {
 
@@ -11,8 +21,6 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
     private JLabel instPageLabel;
     private JPanel mainPanel;
     private JScrollPane jScrollPane1;
-    private JComboBox<String> memSizeCheckbox;
-    private JLabel memSizeLabel;
     private JLabel missesLabel;
     private JTextField missesTxt;
     private JComboBox<String> numPagesCheckbox;
@@ -22,20 +30,19 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
     private JLabel paginMethodLabel;
     private JComboBox<String> pagingMethodCheckbox;
     private JTable table;
+    private JButton startButton;
     
     public MemoryManagerTool() {
-        super("Memory Management Unit", "Memory Manager");
+        super("Memory Management Unit", "Memory Manager Tool");
     }
     
     public void initComponents() {
         mainPanel = new JPanel();
         numPagesLabel = new JLabel();
         instPageLabel = new JLabel();
-        memSizeLabel = new JLabel();
         paginMethodLabel = new JLabel();
         numPagesCheckbox = new JComboBox<>();
         instPageCheckbox = new JComboBox<>();
-        memSizeCheckbox = new JComboBox<>();
         pagingMethodCheckbox = new JComboBox<>();
         jScrollPane1 = new JScrollPane();
         table = new JTable();
@@ -45,22 +52,26 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
         hitsTxt = new JTextField();
         missesTxt = new JTextField();
         pagesReplacementsTxt = new JTextField();
+        startButton = new JButton("Start");
 
         numPagesLabel.setText("# Pages");
 
         instPageLabel.setText("Instructions/Page");
 
-        memSizeLabel.setText("Memory Size");
-
         paginMethodLabel.setText("Paging Method");
 
-        numPagesCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        numPagesCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "1", "2", "4", "8", "16" }));
+        numPagesCheckbox.setSelectedIndex(4);
 
-        instPageCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        instPageCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4" }));
+        instPageCheckbox.setSelectedIndex(3);
 
-        memSizeCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        pagingMethodCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        pagingMethodCheckbox.setModel(new DefaultComboBoxModel<>(new String[] { "NRU", "FIFO", "Segunda chance", "LRU" }));
+        pagingMethodCheckbox.setSelectedIndex(1);
+        
+        startButton.addActionListener((ActionEvent e) -> {
+            start();
+        });
 
         table.setModel(new DefaultTableModel(
             new Object [][] {
@@ -116,11 +127,9 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addComponent(memSizeCheckbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(instPageCheckbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(numPagesCheckbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(paginMethodLabel)
-                            .addComponent(memSizeLabel)
                             .addComponent(instPageLabel)
                             .addComponent(numPagesLabel)))
                     .addGroup(mainPanelLayout.createSequentialGroup()
@@ -134,6 +143,7 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
                         .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(pagesReplacementsTxt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(pagesReplacementsLabel)
+                            .addComponent(startButton)
                             .addComponent(missesTxt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                             .addComponent(hitsTxt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                         .addGap(16, 16, 16))
@@ -162,6 +172,8 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
                 .addComponent(pagesReplacementsLabel)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pagesReplacementsTxt, GroupLayout.PREFERRED_SIZE, 16, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(startButton)
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -176,16 +188,14 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(instPageCheckbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(memSizeLabel)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(memSizeCheckbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(paginMethodLabel)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pagingMethodCheckbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                .addGap(28, 28, 28))
+                        .addComponent(pagingMethodCheckbox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+                .addGap(28, 28, 28)
         );
-
+        
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -204,13 +214,92 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
     
     @Override
     public String getName() {
-        return "Memory Manager";
+        return "Memory Manager Tool";
     }
 
     @Override
     protected JComponent buildMainDisplayArea() {
         initComponents();
         return mainPanel;
+    }
+    
+    public void start() {
+        MemoryManager.setPageSize(Integer.parseInt(instPageCheckbox.getModel().getElementAt(instPageCheckbox.getSelectedIndex())));
+        MemoryManager.setMaxNumPages(Integer.parseInt(numPagesCheckbox.getModel().getElementAt(numPagesCheckbox.getSelectedIndex())));
+        switch (pagingMethodCheckbox.getModel().getElementAt(pagingMethodCheckbox.getSelectedIndex())) {
+            case "NRU":
+                MemoryManager.setSchedulingAlgorithm(MemoryManager.SchedulerEPag.NRU);
+                break;
+            case "FIFO":
+                MemoryManager.setSchedulingAlgorithm(MemoryManager.SchedulerEPag.FIFO);
+                break;
+            case "Segunda chance":
+                MemoryManager.setSchedulingAlgorithm(MemoryManager.SchedulerEPag.SECOND_CHANCE);
+                break;
+            case "LRU":
+                MemoryManager.setSchedulingAlgorithm(MemoryManager.SchedulerEPag.LRU);
+                break;
+        }
+
+        numPagesCheckbox.setEnabled(false);
+        instPageCheckbox.setEnabled(false);
+        pagingMethodCheckbox.setEnabled(false);
+
+//        System.out.println("page size = " + MemoryManager.pageSize);
+//        System.out.println("max num pages = " + MemoryManager.maxNumPages);
+//        System.out.println("paging method = " + MemoryManager.schedulerEPag);
+
+        updateTable(MMU.pageTable);
+    }
+    
+    @Override
+    protected void addAsObserver() {
+        addAsObserver(Memory.textBaseAddress, Memory.textLimitAddress);
+    }
+    
+    @Override
+    protected void processMIPSUpdate(Observable resource, AccessNotice notice) {
+        if (!notice.accessIsFromMIPS()) {
+            return;
+        }
+        if (notice.getAccessType() != AccessNotice.READ) {
+            return;
+        }
+    }
+    
+    @Override
+    protected void updateDisplay() {
+        updateTable(MMU.pageTable);
+    }
+    
+    private void updateTable(Map<ProcessControlBlock, VirtualTableEntry[]> pageTable) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0); // Limpa a tabela antes de adicionar novos dados
+
+        // Percorre o mapa e adiciona as entradas na tabela
+        for (Map.Entry<ProcessControlBlock, VirtualTableEntry[]> entry : pageTable.entrySet()) {
+            ProcessControlBlock pcb = entry.getKey();
+            VirtualTableEntry[] virtualTable = entry.getValue();
+
+            int pageIndex = 0;
+            for (VirtualTableEntry vte : virtualTable) {
+                // Adiciona uma nova linha na tabela com os dados do ProcessControlBlock e da VirtualTableEntry
+                if (vte != null) {
+                    model.addRow(new Object[]{pcb.getPid(), pageIndex++, vte.getFrameNumber()});
+                } else {
+                    model.addRow(new Object[]{pcb.getPid(), pageIndex++, "Not allocated"});
+                }
+            }
+            
+            hitsTxt.setText(Integer.toString(pcb.getHits()));
+            missesTxt.setText(Integer.toString(pcb.getMisses()));
+            pagesReplacementsTxt.setText(Integer.toString(pcb.getPageFaults()));
+        }
+    }
+
+    @Override
+    protected void reset() {
+        
     }
     
 }

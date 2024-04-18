@@ -44,7 +44,7 @@ public class SyscallFork extends AbstractSyscall {
 
         // Verify whether process address limits conflict and corrects them
         MemoryManager.verifyBounds(fork);
-        
+
         // If SyscallFork(address, priority) has been called
         if (RegisterFile.getValue(6) == 1) {
             // Gets the priority value in $a1
@@ -52,8 +52,12 @@ public class SyscallFork extends AbstractSyscall {
 
             fork.setPriority(priority);
         }
+<<<<<<< Updated upstream
         
         
+=======
+
+>>>>>>> Stashed changes
         var pageTable = new VirtualTableEntry[MemoryManager.pageSize];
         MMU.pageTable.put(fork, pageTable);
 
