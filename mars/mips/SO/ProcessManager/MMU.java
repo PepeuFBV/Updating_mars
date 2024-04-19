@@ -5,7 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import mars.mips.SO.ProcessManager.MemoryManager.SchedulerEPag;
 import mars.mips.hardware.AddressErrorException;
 import mars.tools.MemoryManagerTool;
 
@@ -92,6 +91,7 @@ public abstract class MMU {
 
             virtualTable.getPage(numPage).addInstruction(addressInstructions, displacement); // instrução adicionada
             MMU.virtualTable.put(process, virtualTable); // página adicionada na tabela de páginas virtuais
+            virtualTable.getPage(numPage).setReferencedPage(true);
 
             System.out.println(
                     "4 - Entrou no primeiro if, então a página existe, mas não tem instrução na posição. Vamos carregar a instrução para a página.");
@@ -100,6 +100,11 @@ public abstract class MMU {
                     + " no deslocamento " + displacement);
             System.out.println(
                     "Operação de adição de instrução concluída com sucesso.\n============================================================");
+
+            // Obtém a fila de páginas do processo, se existir, ou cria uma nova fila
+            Queue<VirtualTableEntry> processLastPage = MMU.lastPage.getOrDefault(process, new LinkedList<>());
+            processLastPage.add(virtualTable.getPage(numPage)); // adiciona a página à fila de páginas
+            MMU.lastPage.put(process, processLastPage); // atualiza a fila de páginas no mapa
 
         } else if (virtualTable.getPage(numPage).getInstructions()[displacement] != addressInstructions) {
             // Se entrou aqui é porque a página existe, mas a instrução na posição
@@ -123,7 +128,7 @@ public abstract class MMU {
                 case NRU:
                     // chama lá
                 case FIFO:
-                    MemoryManager.FIFO();   
+                    MemoryManager.FIFO();
                 case SECOND_CHANCE:
                     MemoryManager.SECOND_CHANCE();
                 case LRU:
@@ -137,13 +142,8 @@ public abstract class MMU {
             virtualTable.getPage(numPage).addInstruction(addressInstructions, displacement);
             MMU.virtualTable.put(process, virtualTable);
 
-            Queue<VirtualTableEntry> processLastPage = lastPage.get(process);
-            if (processLastPage == null) {
-                processLastPage = new LinkedList<>();
-                lastPage.put(process, processLastPage);
-            }
-            processLastPage.add(virtualTable.getPage(numPage));
-            virtualTable.getPage(numPage).setModifiedPage(true); 
+            virtualTable.getPage(numPage).setModifiedPage(true);
+            virtualTable.getPage(numPage).setReferencedPage(true);
 
             System.out.println("6 - Página " + numPage + " adicionada");
             System.out.println("7 - Número de páginas do processo "
@@ -155,20 +155,16 @@ public abstract class MMU {
 
     public static void addPageNull(int addressInstructions, int numPage, int displacement, VirtualTable virtualTable,
             ProcessControlBlock process) {
-        // Se entrou aqui, é porque a página é nula, então cria uma página nova e
-        // adiciona a instrução nela.
         System.out.println("3 - Número de páginas do processo "
                 + process.getPid() + " antes da criação da nova página: " + virtualTable.getSize());
         virtualTable.createPage(numPage); // página criada
         virtualTable.getPage(numPage).addInstruction(addressInstructions, displacement); // instrução adicionada
         MMU.virtualTable.put(process, virtualTable); // página adicionada na tabela de páginas virtuais
 
-        Queue<VirtualTableEntry> processLastPage = lastPage.get(process); // adiciona a página na fila de páginas
-        if (processLastPage == null) { // se a fila de páginas for nula, cria uma nova
-            processLastPage = new LinkedList<>(); // cria a fila
-            lastPage.put(process, processLastPage); // adiciona a fila na lista de páginas
-        }
-        processLastPage.add(virtualTable.getPage(numPage)); // adiciona a página na fila de páginas
+        // Obtém a fila de páginas do processo, se existir, ou cria uma nova fila
+        Queue<VirtualTableEntry> processLastPage = MMU.lastPage.getOrDefault(process, new LinkedList<>());
+        processLastPage.add(virtualTable.getPage(numPage)); // adiciona a página à fila de páginas
+        MMU.lastPage.put(process, processLastPage); // atualiza a fila de páginas no mapa
 
         System.out.println("4 - Página " + numPage + " adicionada");
         System.out.println(

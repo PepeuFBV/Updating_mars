@@ -353,24 +353,24 @@ public class MemoryManagerTool extends AbstractMarsToolAndApplication {
                         ProcessControlBlock pcb = entry.getKey();
                         VirtualTable virtualTable = entry.getValue();
 
-                        int pageIndex = 0;
-                        for (VirtualTableEntry vte : virtualTable.getPages()) {
-                                // Adiciona uma nova linha na tabela com os dados do ProcessControlBlock e da
-                                // VirtualTableEntry
+                        if (virtualTable.getPages() != null) {
+                                int pageIndex = 0;
+                                for (VirtualTableEntry vte : virtualTable.getPages()) {
 
-                                if (vte != null && vte.getInstructions() != null) {
-                                        for (int i = 0; i < vte.getInstructions().length; i++) {
-                                                model.addRow(new Object[] { pcb.getPid(), pageIndex, i,
-                                                                vte.getInstructions()[i] });
+                                        if (vte != null && vte.getInstructions() != null) {
+                                                for (int i = 0; i < vte.getInstructions().length; i++) {
+                                                        model.addRow(new Object[] { pcb.getPid(), pageIndex, i,
+                                                                        vte.getInstructions()[i] });
+                                                }
+                                        } else {
+                                                for (int i = 0; i < MemoryManager.pageSize; i++) {
+                                                        model.addRow(new Object[] { pcb.getPid(), pageIndex, i,
+                                                                        "Not allocated" });
+                                                }
                                         }
-                                } else {
-                                        for (int i = 0; i < MemoryManager.pageSize; i++) {
-                                                model.addRow(new Object[] { pcb.getPid(), pageIndex, i,
-                                                                "Not allocated" });
-                                        }
+
+                                        pageIndex++;
                                 }
-
-                                pageIndex++;
                         }
 
                         hitsTxt.setText(Integer.toString(MMU.hits));

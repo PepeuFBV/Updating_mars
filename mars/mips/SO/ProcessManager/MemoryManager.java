@@ -104,25 +104,22 @@ public abstract class MemoryManager {
     // Implementar algoritmo FIFO de troca de página virtual
 
     public static void FIFO() {
-        // Implementar algoritmo FIFO de troca de página virtual
-        // Acha a página mais antiga para ser removida
-        VirtualTableEntry page = MMU.lastPage.get(ProcessTable.getExecutionProcess()).poll();
+        ProcessControlBlock process = ProcessTable.getExecutionProcess();
+        Queue<VirtualTableEntry> processLastPage = MMU.lastPage.get(process);
 
-        // if (page.isModifiedPage()) {
-        //     // Salva a página no disco
-        // }
+        if (processLastPage != null && !processLastPage.isEmpty()) {
+            // Remove a página mais antiga da fila
+            VirtualTableEntry page = processLastPage.poll();
 
-        for (int i = 0; i < maxNumPages; i++) {
-            if (MMU.virtualTable.get(ProcessTable.getExecutionProcess()) != null && MMU.virtualTable.get(ProcessTable.getExecutionProcess()).getPage(i) == page) {
-                System.out.println("5 - Página removida: " + i + " do processo "
-                        + ProcessTable.getExecutionProcess().getPid() + ".");
-                break;
-            }
+            // Remove a página da tabela de páginas virtuais
+            MMU.virtualTable.get(process).removePage(page);
+
+            // Atualiza o mapa lastPage após a remoção da página
+            MMU.lastPage.put(process, processLastPage);
+
+        } else {
+            System.err.println("A fila de páginas está vazia. Não é possível remover um elemento.");
         }
-
-        // Remove a página da tabela de páginas virtuais
-        MMU.virtualTable.get(ProcessTable.getExecutionProcess()).removePage(page);
-        // página removida, agora é só adicionar a nova página
     }
 
     public static void SECOND_CHANCE() {

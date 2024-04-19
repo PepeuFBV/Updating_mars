@@ -20,7 +20,9 @@ public class VirtualTable {
 
     public void createPage(int numPage) {
         virtualTable[numPage] = new VirtualTableEntry();
-        size++;
+        if (size < MemoryManager.maxNumPages){
+            size++;
+        }
     }
 
     public void setPage(VirtualTableEntry page) {
@@ -49,11 +51,11 @@ public class VirtualTable {
     public void removePage(VirtualTableEntry page) {
         for (int i = 0; i < size; i++) {
             if (virtualTable[i] == page) {
-                virtualTable[i] = new VirtualTableEntry();
+                virtualTable[i] = null;
                 size--;
-                System.out.println("Página removida");
                 break;
             }
         }
     }
+
 }
