@@ -5,13 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="399e5b47-ebc7-4c08-b38a-30c1e19c6bd0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/VirtualTable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/MMU.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/MMU.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/MemoryManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/MemoryManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/VirtualTableEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/SO/ProcessManager/VirtualTableEntry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallFork.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/mips/instructions/syscalls/SyscallFork.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mars/tools/MemoryManagerTool.java" beforeDir="false" afterPath="$PROJECT_DIR$/mars/tools/MemoryManagerTool.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -54,9 +66,10 @@
     &quot;Application.run.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;2.2&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/Documents/CC/2023.2/Sistemas Operacionais/Unidade II/Implementação/Updating_mars&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -98,8 +111,10 @@
       <workItem from="1707521651659" duration="600000" />
       <workItem from="1708046307701" duration="75000" />
       <workItem from="1708346004944" duration="1348000" />
-      <workItem from="1712840905679" duration="722000" />
-      <workItem from="1712872547620" duration="241000" />
+      <workItem from="1710417021607" duration="10193000" />
+      <workItem from="1710464903341" duration="13000" />
+      <workItem from="1713374022798" duration="2294000" />
+      <workItem from="1713445488328" duration="6708000" />
     </task>
     <servers />
   </component>

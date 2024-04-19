@@ -4,11 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
-
 import mars.mips.SO.ProcessManager.ProcessControlBlock;
 import mars.mips.SO.ProcessManager.ProcessTable;
 import mars.mips.SO.ProcessManager.Scheduler;
-import mars.mips.SO.ProcessManager.SchedulerE;
 import mars.mips.hardware.AccessNotice;
 import mars.mips.hardware.Memory;
 import mars.mips.hardware.MemoryAccessNotice;
@@ -84,7 +82,7 @@ public class TimerTool extends AbstractMarsToolAndApplication {
                 interruptInterval = 1;
                 intervalField.setText(Integer.toString(interruptInterval));
             }
-            System.out.println("interrupt interval : " + interruptInterval);
+            System.out.println("Interrupt interval : " + interruptInterval);
             instructionCount = 0;
         });
 
@@ -111,10 +109,10 @@ public class TimerTool extends AbstractMarsToolAndApplication {
         if (notice.getAccessType() != AccessNotice.READ) {
             return;
         }
-        
+
         MemoryAccessNotice memoryNotice = (MemoryAccessNotice) notice;
         int address = memoryNotice.getAddress();
-        
+
         if (address >= Memory.textBaseAddress && address <= Memory.textLimitAddress) {
             instructionCount++;
 
@@ -134,15 +132,13 @@ public class TimerTool extends AbstractMarsToolAndApplication {
     }
 
     public static void handleTimerInterrupt() {
-        if (!ProcessTable.getReadyProcesses().isEmpty()) {
-            ProcessControlBlock process = ProcessTable.getExecutionProcess();
-            process.copyFromHardware();
-            ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
+        ProcessControlBlock process = ProcessTable.getExecutionProcess();
+        process.copyFromHardware();
+        ProcessTable.changeState(ProcessControlBlock.ProcessState.READY);
 
-            Scheduler.schedule();
+        Scheduler.schedule();
 
-            ProcessTable.getReadyProcesses().addLast(process);
-        }
+        ProcessTable.getReadyProcesses().addLast(process);
         ProcessTable.listProcesses();
     }
 

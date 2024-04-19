@@ -7,6 +7,8 @@ import mars.mips.hardware.*;
 import mars.mips.instructions.*;
 import java.util.*;
 import javax.swing.*;
+import mars.mips.SO.ProcessManager.MMU;
+import mars.mips.SO.ProcessManager.MemoryManager;
 import mars.tools.TimerTool;
 import mars.mips.SO.ProcessManager.ProcessTable;
 
@@ -334,12 +336,29 @@ public class Simulator extends Observable {
             while (statement != null) {
                 pc = RegisterFile.getProgramCounter(); // added: 7/26/06 (explanation above)
 
-                // If TimerTool is calling scheduler and the ready process list is empty,
-                // returns pc value to old value
-                if (TimerTool.isScheduling()) {
-                    TimerTool.handleTimerInterrupt();
+                // Verify if address of the current statement is between the upper and lower limits of the execution process
+                try {
+                    MemoryManager.verifyMemory();
+                    MMU.verifyInstruction(pc);
+                } catch (AddressErrorException aee) {
+                    ErrorList el = new ErrorList();
+                    el.add(new ErrorMessage((MIPSprogram) null, 0, 0, aee.getMessage()));
+                    this.pe = new ProcessingException(el, aee);
+                    Coprocessor0.updateRegister(Coprocessor0.EPC, RegisterFile.getProgramCounter());
+                    this.constructReturnReason = EXCEPTION;
+                    this.done = true;
+                    SystemIO.resetFiles(); // close any files opened in MIPS program
+                    Simulator.getInstance().notifyObserversOfExecutionStop(maxSteps, pc);
+                    return done;
+                }
+
+                // Verify TimerTool is scheduling and ready processes queue isn't empty.
+                boolean executeInstruction = TimerTool.isScheduling() && !ProcessTable.getReadyProcesses().isEmpty();
+                if (executeInstruction) {
+                    System.out.println("Handle Timer Interrupt");
+                    TimerTool.handleTimerInterrupt(); // Save context and calls scheduler
                 } else {
-                    RegisterFile.incrementPC();
+                    RegisterFile.incrementPC(); // Increment Program Counter
                 }
 
                 // Perform the MIPS instruction in synchronized block.  If external threads agree
@@ -360,8 +379,9 @@ public class Simulator extends Observable {
                                     Exceptions.RESERVED_INSTRUCTION_EXCEPTION);
                         }
                         // THIS IS WHERE THE INSTRUCTION EXECUTION IS ACTUALLY SIMULATED!
-                        if (!TimerTool.isScheduling())
+                        if (!executeInstruction) {
                             instruction.getSimulationCode().simulate(statement);
+                        }
 
                         // IF statement added 7/26/06 (explanation above)
                         if (Globals.getSettings().getBackSteppingEnabled()) {
