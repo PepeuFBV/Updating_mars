@@ -21,10 +21,6 @@ What you need to install the software:
 2. Navigate to the project folder
 3. Compile the project
 
-## Running the tests
-
-To run the tests, you need to open the Mars MIPS Simulator and load the project file. Then, you can run created Syscalls etc etc --TODO
-
 ## Project Details
 
 The project was developed under the Operating Systems course at the Federal University of the Semi-Arid Rural Area (UFERSA). The project was developed by the following students:
