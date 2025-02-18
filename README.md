@@ -28,7 +28,6 @@ The project was developed under the Operating Systems course at the Federal Univ
 - Breno Klywer
 - Pedro Figueira
 
-
 ## Implementation Steps
 
 The project was divided into the following parts:
